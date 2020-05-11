@@ -23,46 +23,47 @@
             var scaleIndex = 0;
             var allDomains = [{
                               name: "Mood",
-                              hscales: ["Enthusiasm","Assertiveness"],
-                              vscales: ["Volatility","Withdrawal"]
+                              hscales: ["Enthusiasm","Assertiveness"],// Extraversion
+                              vscales: ["Volatility","Withdrawal"]// Neuroticism
                               },{
                               name: "Relations",
-                              hscales: ["Compassion","Politeness"],
-                              vscales: ["Enthusiasm","Assertiveness"]
+                              hscales: ["Compassion","Politeness"],// Agreeableness
+                              vscales: ["Enthusiasm","Assertiveness"]// Extraversion
                               },{
                               name: "AngerControl",
-                              hscales: ["Compassion","Politeness"],
-                              vscales: ["Volatility","Withdrawal"]
+                              hscales: ["Compassion","Politeness"],// Agreeableness
+                              vscales: ["Volatility","Withdrawal"]// Neuroticism
                               },{
                               name: "ImpulseControl",
-                              hscales: ["Industriousness","Orderliness"],
-                              vscales: ["Volatility","Withdrawal"]
+                              hscales: ["Industriousness","Orderliness"],// Conscientiousness
+                              vscales: ["Volatility","Withdrawal"]// Neuroticism
                               },{
                               name: "SelfDefense",
-                              hscales: ["Intellect","Openness"],
-                              vscales: ["Volatility","Withdrawal"]
+                              hscales: ["Intellect","Openness"],// Openness
+                              vscales: ["Volatility","Withdrawal"]// Neuroticism
                               },{
                               name: "Interests",
-                              hscales: ["Intellect","Openness"],
-                              vscales: ["Enthusiasm","Assertiveness"]
+                              hscales: ["Intellect","Openness"],// Openness
+                              vscales: ["Enthusiasm","Assertiveness"]// Extraversion
                               },{
                               name: "Activities",
-                              hscales: ["Enthusiasm","Assertiveness"],
-                              vscales: ["Volatility","Withdrawal"]
+                              hscales: ["Enthusiasm","Assertiveness"],// Extraversion
+                              vscales: ["Industriousness","Orderliness"]// Conscientiousness
                               },{
                               name: "SocialAttitudes",
-                              hscales: ["Compassion","Politeness"],
-                              vscales: ["Intellect","Openness"]
+                              hscales: ["Compassion","Politeness"],// Agreeableness
+                              vscales: ["Intellect","Openness"]// Openness
                               },{
                               name: "Intelligence",
-                              hscales: ["Industriousness","Orderliness"],
-                              vscales: ["Intellect","Openness"]
+                              hscales: ["Industriousness","Orderliness"],// Conscientiousness
+                              vscales: ["Intellect","Openness"]// Openness
                               },{
                               name: "Character",
-                              hscales: ["Industriousness","Orderliness"],
-                              vscales: ["Compassion","Politeness"]
+                              hscales: ["Industriousness","Orderliness"],// Conscientiousness
+                              vscales: ["Compassion","Politeness"]// Agreeableness
                               }];
             var domainCoordinates = {};
+            var selectedDomain = null;
             function startScales() {
                 // document.getElementById("demo").innerHTML = "Paragraph changed.";
                 document.getElementById("FactorSelect").hidden = true;
@@ -101,7 +102,6 @@
                 document.getElementById(shuffledScales[scaleIndex]+"Scale").hidden = false;
             }
             function scalesDone() {
-                var selectedDomain = null;
                 document.getElementById("Scales").hidden = true;
                 console.log( 'shuffledScales: '+shuffledScales.join(' ') );
                 console.log(shuffledScales);
@@ -142,12 +142,17 @@
                         console.log('angle='+angle);
                         var dist = Math.sqrt(vmean*vmean + hmean*hmean);
                         console.log('dist='+dist)
-                        var maxDist = 4*Math.min(  Math.abs( 1/Math.cos(angle) ), Math.abs( 1/Math.sin(angle) )  );
+                        // 10 is half the side length in scale space.
+                        var maxDist = 10*Math.min(  Math.abs( 1/Math.cos(angle) ), Math.abs( 1/Math.sin(angle) )  );
                         console.log('maxDist='+maxDist);
+                        // 240 is the outer circle radius in circumplex space.
                         var radius = 240*dist/maxDist;
                         console.log('radius='+radius);
+                        // The circumplex is centered on (250,250).
+                        // More x is right in both SVG and circumplex coordinates.
                         var x = 250 + radius*Math.cos(angle);
-                        var y = 250 + radius*Math.sin(angle);
+                        // More y is down in SVG coordinates, but positive is up in the circumplex.
+                        var y = 250 - radius*Math.sin(angle);
                         domainCoordinates[domain.name] = { cx: x, cy: y };
                         document.getElementById(domain.name+"Option").hidden = false;
                         console.log('has summary point ('+x+','+y+')');
@@ -156,7 +161,8 @@
                             selectedDomain = domain.name;
                             document.getElementById("SummaryPoint").setAttribute("cx",x);
                             document.getElementById("SummaryPoint").setAttribute("cy",y);
-                            document.getElementById(domain.name+"Option").selected = true;
+                            document.getElementById(selectedDomain+"Option").selected = true;
+                            document.getElementById(selectedDomain+"Words").setAttribute("visibility","visible");
                         }
                     }
                     else {
@@ -167,10 +173,12 @@
                 document.getElementById("CircumplexView").hidden = false;
             }
             function setDomain() {
-                var domainName = document.getElementById("DomainSelect").value;
-                console.log('set domain to '+domainName);
-                document.getElementById("SummaryPoint").setAttribute("cx",domainCoordinates[domainName].cx);
-                document.getElementById("SummaryPoint").setAttribute("cy",domainCoordinates[domainName].cy);
+                document.getElementById(selectedDomain+"Words").setAttribute("visibility","hidden");
+                selectedDomain = document.getElementById("DomainSelect").value;
+                document.getElementById(selectedDomain+"Words").setAttribute("visibility","visible");
+                document.getElementById("SummaryPoint").setAttribute("cx",domainCoordinates[selectedDomain].cx);
+                document.getElementById("SummaryPoint").setAttribute("cy",domainCoordinates[selectedDomain].cy);
+                console.log('set domain to '+selectedDomain);
             }
         </script>
         <noscript>Personality Profiler requires JavaScript in order to function.</noscript>
@@ -199,52 +207,52 @@
                 <input type="button" onclick="scalesBack()" value="Back">
                 <span id="VolatilityScale" name="VolatilityScale" hidden>
                     <label for="VolatilityRange">Stolid</label>
-                    <input type="range" id="VolatilityRange" name="VolatilityRange" min="-4" max="4">
+                    <input type="range" id="VolatilityRange" name="VolatilityRange" min="-10" max="10">
                     <label for="VolatilityRange">Volatile</label>
                 </span>
                 <span id="WithdrawalScale" name="WithdrawalScale" hidden>
                     <label for="WithdrawalRange">Outgoing</label>
-                    <input type="range" id="WithdrawalRange" name="WithdrawalRange" min="-4" max="4">
+                    <input type="range" id="WithdrawalRange" name="WithdrawalRange" min="-10" max="10">
                     <label for="WithdrawalRange">Withdrawn</label>
                 </span>
                 <span id="CompassionScale" name="CompassionScale" hidden>
                     <label for="CompassionRange">Dispassionate</label>
-                    <input type="range" id="CompassionRange" name="CompassionRange" min="-4" max="4">
+                    <input type="range" id="CompassionRange" name="CompassionRange" min="-10" max="10">
                     <label for="CompassionRange">Compassionate</label>
                 </span>
                 <span id="PolitenessScale" name="PolitenessScale" hidden>
                     <label for="PolitenessRange">Rude</label>
-                    <input type="range" id="PolitenessRange" name="PolitenessRange" min="-4" max="4">
+                    <input type="range" id="PolitenessRange" name="PolitenessRange" min="-10" max="10">
                     <label for="PolitenessRange">Polite</label>
                 </span>
                 <span id="IndustriousnessScale" name="IndustriousnessScale" hidden>
                     <label for="IndustriousnessRange">Passive</label>
-                    <input type="range" id="IndustriousnessRange" name="IndustriousnessRange" min="-4" max="4">
+                    <input type="range" id="IndustriousnessRange" name="IndustriousnessRange" min="-10" max="10">
                     <label for="IndustriousnessRange">Industrious</label>
                 </span>
                 <span id="OrderlinessScale" name="OrderlinessScale" hidden>
                     <label for="OrderlinessRange">Chaotic</label>
-                    <input type="range" id="OrderlinessRange" name="OrderlinessRange" min="-4" max="4">
+                    <input type="range" id="OrderlinessRange" name="OrderlinessRange" min="-10" max="10">
                     <label for="OrderlinessRange">Orderly</label>
                 </span>
                 <span id="EnthusiasmScale" name="EnthusiasmScale" hidden>
                     <label for="EnthusiasmRange">Disaffected</label>
-                    <input type="range" id="EnthusiasmRange" name="EnthusiasmRange" min="-4" max="4">
+                    <input type="range" id="EnthusiasmRange" name="EnthusiasmRange" min="-10" max="10">
                     <label for="EnthusiasmRange">Enthusiastic</label>
                 </span>
                 <span id="AssertivenessScale" name="AssertivenessScale" hidden>
                     <label for="AssertivenessRange">Timid</label>
-                    <input type="range" id="AssertivenessRange" name="AssertivenessRange" min="-4" max="4">
+                    <input type="range" id="AssertivenessRange" name="AssertivenessRange" min="-10" max="10">
                     <label for="AssertivenessRange">Assertive</label>
                 </span>
                 <span id="IntellectScale" name="IntellectScale" hidden>
                     <label for="IntellectRange">Lowbrow</label>
-                    <input type="range" id="IntellectRange" name="IntellectRange" min="-4" max="4">
+                    <input type="range" id="IntellectRange" name="IntellectRange" min="-10" max="10">
                     <label for="IntellectRange">Intellectual</label>
                 </span>
                 <span id="OpennessScale" name="OpennessScale" hidden>
                     <label for="OpennessRange">Guarded</label>
-                    <input type="range" id="OpennessRange" name="OpennessRange" min="-4" max="4">
+                    <input type="range" id="OpennessRange" name="OpennessRange" min="-10" max="10">
                     <label for="OpennessRange">Open</label>
                 </span>
                 <input type="button" onclick="scalesNext()" value="Next"><br>
@@ -258,6 +266,319 @@
                     <line x1="342" y1="472" x2="158" y2="28" stroke="black" stroke-width="4" />
                     <line x1="158" y1="472" x2="342" y2="28" stroke="black" stroke-width="4" />
                     <line x1="28"  y1="342" x2="472" y2="158" stroke="black" stroke-width="4" />
+                    <circle cx="250" cy="250" r="40" stroke="black" stroke-width="4" fill="white" />
+                    <text id="MoodWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="225" y="60" >Gloomy</tspan>
+                        <tspan x="225" y="160" >Serious</tspan>
+                        <!--Up-Left-->
+                        <tspan x="100" y="130" >Worried</tspan>
+                        <tspan x="160" y="200" >Cautious</tspan>
+                        <!--Left-->
+                        <tspan x="30" y="255" >Lethargic</tspan>
+                        <tspan x="140" y="255" >Calm</tspan>
+                        <!--Down-Left-->
+                        <tspan x="100" y="390" >Lazy</tspan>
+                        <tspan x="167" y="309" >Easy-</tspan>
+                        <tspan x="167" y="326" >Going</tspan>
+                        <!--Down-->
+                        <tspan x="230" y="460" >Joyful</tspan>
+                        <tspan x="225" y="350" >Cheerful</tspan>
+                        <!--Down-Right-->
+                        <tspan x="350" y="390" >Vivacious</tspan>
+                        <tspan x="276" y="306" >Enthusiastic</tspan>
+                        <!--Right-->
+                        <tspan x="415" y="255" >Excited</tspan>
+                        <tspan x="300" y="255" >Energetic</tspan>
+                        <!--Up-Right-->
+                        <tspan x="360" y="130" >Driven</tspan>
+                        <tspan x="290" y="200" >Restless</tspan>
+                        <!--Center-->
+                        <tspan x="221" y="255" >Centered</tspan>
+                    </text>
+                    <text id="AngerControlWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="214" y="60" >Oscillating</tspan>
+                        <tspan x="218" y="160" >Disturbed</tspan>
+                        <!--Up-Left-->
+                        <tspan x="100" y="130" >Raging</tspan>
+                        <tspan x="175" y="200" >Irate</tspan>
+                        <!--Left-->
+                        <tspan x="30" y="255" >Hostile</tspan>
+                        <tspan x="140" y="248" >Dis-</tspan>
+                        <tspan x="140" y="263" >agreeable</tspan>
+                        <!--Down-Left-->
+                        <tspan x="75" y="390" >Cold-Blooded</tspan>
+                        <tspan x="170" y="317" >Aloof</tspan>
+                        <!--Down-->
+                        <tspan x="235" y="460" >Stable</tspan>
+                        <tspan x="237" y="340" >Un-</tspan>
+                        <tspan x="222" y="355" >disturbed</tspan>
+                        <!--Down-Right-->
+                        <tspan x="360" y="390" >Forgiving</tspan>
+                        <tspan x="287" y="317" >Tolerant</tspan>
+                        <!--Right-->
+                        <tspan x="395" y="255" >Cooperative</tspan>
+                        <tspan x="297" y="255" >Agreeable</tspan>
+                        <!--Up-Right-->
+                        <tspan x="350" y="130" >Repressed</tspan>
+                        <tspan x="290" y="200" >Uptight</tspan>
+                        <!--Center-->
+                        <tspan x="216" y="255" >Concerned</tspan>
+                    </text>
+                    <text id="ImpulseControlWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="214" y="60" >Vacillating</tspan>
+                        <tspan x="216" y="160" >Conflicted</tspan>
+                        <!--Up-Left-->
+                        <tspan x="95" y="130" >Impulsive</tspan>
+                        <tspan x="170" y="190" >Weak-</tspan>
+                        <tspan x="170" y="210" >Willed</tspan>
+                        <!--Left-->
+                        <tspan x="30" y="255" >Reflexive</tspan>
+                        <tspan x="137" y="255" >Distracted</tspan>
+                        <!--Down-Left-->
+                        <tspan x="75" y="390" >Uncontrolled</tspan>
+                        <tspan x="162" y="317" >Relaxed</tspan>
+                        <!--Down-->
+                        <tspan x="227" y="460" >Flowing</tspan>
+                        <tspan x="229" y="342" >Spon-</tspan>
+                        <tspan x="227" y="357" >taneous</tspan>
+                        <!--Down-Right-->
+                        <tspan x="355" y="390" >Intentional</tspan>
+                        <tspan x="287" y="317" >Directed</tspan>
+                        <!--Right-->
+                        <tspan x="390" y="255" >Premeditated</tspan>
+                        <tspan x="305" y="255" >Mindful</tspan>
+                        <!--Up-Right-->
+                        <tspan x="330" y="130" >Over-Controlled</tspan>
+                        <tspan x="280" y="200" >Controlled</tspan>
+                        <!--Center-->
+                        <tspan x="227" y="255" >Neutral</tspan>
+                    </text>
+                    <text id="RelationsWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="204" y="60" >Magnanimous</tspan>
+                        <tspan x="219" y="160" >Engaging</tspan>
+                        <!--Up-Left-->
+                        <tspan x="80" y="130" >Dominating</tspan>
+                        <tspan x="160" y="200" >Forceful</tspan>
+                        <!--Left-->
+                        <tspan x="30" y="255" >Arrogant</tspan>
+                        <tspan x="143" y="255" >Proud</tspan>
+                        <!--Down-Left-->
+                        <tspan x="75" y="390" >Angry</tspan>
+                        <tspan x="160" y="317" >Irritable</tspan>
+                        <!--Down-->
+                        <tspan x="225" y="460" >Resentful</tspan>
+                        <tspan x="227" y="342" >Touchy</tspan>
+                        <!--Down-Right-->
+                        <tspan x="355" y="390" >Submissive</tspan>
+                        <tspan x="297" y="317" >Timid</tspan>
+                        <!--Right-->
+                        <tspan x="400" y="255" >Dependent</tspan>
+                        <tspan x="316" y="255" >Docile</tspan>
+                        <!--Up-Right-->
+                        <tspan x="360" y="130" >Loving</tspan>
+                        <tspan x="290" y="200" >Friendly</tspan>
+                        <!--Center-->
+                        <tspan x="218" y="255" >Impassive</tspan>
+                    </text>
+                    <text id="InterestsWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="185" y="60" >Excitement-Seeking</tspan>
+                        <tspan x="214" y="155" >Gregarious</tspan>
+                        <!--Up-Left-->
+                        <tspan x="65" y="130" >Trend-Following</tspan>
+                        <tspan x="167" y="185" >Main-</tspan>
+                        <tspan x="165" y="205" >Stream</tspan>
+                        <!--Left-->
+                        <tspan x="20" y="255" >Old-Fashioned</tspan>
+                        <tspan x="140" y="255" >Nostalgic</tspan>
+                        <!--Down-Left-->
+                        <tspan x="75" y="390" >Disinterested</tspan>
+                        <tspan x="163" y="317" >Insular</tspan>
+                        <!--Down-->
+                        <tspan x="227" y="460" >Casual</tspan>
+                        <tspan x="227" y="342" >Solitary</tspan>
+                        <!--Down-Right-->
+                        <tspan x="355" y="390" >Quirky</tspan>
+                        <tspan x="297" y="308" >Intro-</tspan>
+                        <tspan x="288" y="322" >spective</tspan>
+                        <!--Right-->
+                        <tspan x="378" y="255" >Novelty-Seeking</tspan>
+                        <tspan x="310" y="255" >Curious</tspan>
+                        <!--Up-Right-->
+                        <tspan x="340" y="130" >Trend-Setting</tspan>
+                        <tspan x="290" y="190" >Experi-</tspan>
+                        <tspan x="290" y="210" >mental</tspan>
+                        <!--Center-->
+                        <tspan x="227" y="255" >Typical</tspan>
+                    </text>
+                    <text id="ActivitiesWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="185" y="60" >Conscientious++</tspan>
+                        <tspan x="214" y="155" >Conscien-</tspan>
+                        <tspan x="224" y="175" >tious+</tspan>
+                        <!--Up-Left-->
+                        <tspan x="65" y="130" >C++E--</tspan>
+                        <tspan x="167" y="185" >C+E-</tspan>
+                        <!--Left-->
+                        <tspan x="20" y="255" >Extraverted--</tspan>
+                        <tspan x="140" y="245" >Extra-</tspan>
+                        <tspan x="140" y="265" >verted-</tspan>
+                        <!--Down-Left-->
+                        <tspan x="75" y="390" >C--E--</tspan>
+                        <tspan x="163" y="317" >C-E-</tspan>
+                        <!--Down-->
+                        <tspan x="210" y="460" >Conscientious--</tspan>
+                        <tspan x="227" y="332" >Con-</tspan>
+                        <tspan x="217" y="352" >scientious-</tspan>
+                        <!--Down-Right-->
+                        <tspan x="355" y="390" >C--E++</tspan>
+                        <tspan x="297" y="308" >C-E+</tspan>
+                        <!--Right-->
+                        <tspan x="390" y="255" >Extraverted++</tspan>
+                        <tspan x="310" y="245" >Extra-</tspan>
+                        <tspan x="310" y="265" >verted+</tspan>
+                        <!--Up-Right-->
+                        <tspan x="340" y="130" >C++E++</tspan>
+                        <tspan x="290" y="190" >C+E-</tspan>
+                        <!--Center-->
+                        <tspan x="227" y="255" >C=E=0</tspan>
+                    </text>
+                    <text id="SelfDefenseWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="225" y="60" >Fearful</tspan>
+                        <tspan x="223" y="159" >Anxious</tspan>
+                        <!--Up-Left-->
+                        <tspan x="80" y="130" >Maladaptive</tspan>
+                        <tspan x="153" y="200" >Defensive</tspan>
+                        <!--Left-->
+                        <tspan x="20" y="255" >Walled-Off</tspan>
+                        <tspan x="140" y="255" >Avoidant</tspan>
+                        <!--Down-Left-->
+                        <tspan x="75" y="390" >Uninvolved</tspan>
+                        <tspan x="163" y="317" >Remote</tspan>
+                        <!--Down-->
+                        <tspan x="232" y="460" >Secure</tspan>
+                        <tspan x="216" y="355" >Unworried</tspan>
+                        <!--Down-Right-->
+                        <tspan x="350" y="390" >Resourceful</tspan>
+                        <tspan x="287" y="313" >Adaptive</tspan>
+                        <!--Right-->
+                        <tspan x="390" y="255" >Open-Minded</tspan>
+                        <tspan x="310" y="255" >Frank</tspan>
+                        <!--Up-Right-->
+                        <tspan x="340" y="130" >Undefended</tspan>
+                        <tspan x="280" y="200" >Vulnerable</tspan>
+                        <!--Center-->
+                        <tspan x="234" y="255" >Alert</tspan>
+                    </text>
+                    <text id="SocialAttitudesWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="215" y="60" >Libertarian</tspan>
+                        <tspan x="239" y="148" >In-</tspan>
+                        <tspan x="217" y="163" >dependent</tspan>
+                        <!--Up-Left-->
+                        <tspan x="80" y="130" >Iconoclastic</tspan>
+                        <tspan x="166" y="185" >Free-</tspan>
+                        <tspan x="160" y="205" >Thinking</tspan>
+                        <!--Left-->
+                        <tspan x="20" y="255" >Revolutionary</tspan>
+                        <tspan x="140" y="255" >Partisan</tspan>
+                        <!--Down-Left-->
+                        <tspan x="75" y="390" >Authoritarian</tspan>
+                        <tspan x="160" y="309" >Conserv-</tspan>
+                        <tspan x="170" y="325" >ative</tspan>
+                        <!--Down-->
+                        <tspan x="215" y="460" >Totalitarian</tspan>
+                        <tspan x="219" y="350" >Dogmatic</tspan>
+                        <!--Down-Right-->
+                        <tspan x="350" y="390" >Traditional</tspan>
+                        <tspan x="287" y="300" >Con-</tspan>
+                        <tspan x="282" y="320" >ventional</tspan>
+                        <!--Right-->
+                        <tspan x="390" y="255" >Humanitarian</tspan>
+                        <tspan x="300" y="255" >Moderate</tspan>
+                        <!--Up-Right-->
+                        <tspan x="360" y="130" >Utopian</tspan>
+                        <tspan x="290" y="200" >Liberal</tspan>
+                        <!--Center-->
+                        <tspan x="225" y="255" >Centrist</tspan>
+                    </text>
+                    <text id="IntelligenceWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="215" y="60" >Visionary</tspan>
+                        <tspan x="217" y="155" >Innovative</tspan>
+                        <!--Up-Left-->
+                        <tspan x="100" y="130" >Dreamy</tspan>
+                        <tspan x="160" y="200" >Creative</tspan>
+                        <!--Left-->
+                        <tspan x="30" y="255" >Unrealistic</tspan>
+                        <tspan x="134" y="255" >Impractical</tspan>
+                        <!--Down-Left-->
+                        <tspan x="90" y="390" >Illiterate</tspan>
+                        <tspan x="173" y="300" >Un-</tspan>
+                        <tspan x="158" y="320" >educated</tspan>
+                        <!--Down-->
+                        <tspan x="215" y="460" >Immitative</tspan>
+                        <tspan x="224" y="350" >Sensible</tspan>
+                        <!--Down-Right-->
+                        <tspan x="365" y="390" >Logical</tspan>
+                        <tspan x="283" y="312" >Objective</tspan>
+                        <!--Right-->
+                        <tspan x="405" y="255" >Scholarly</tspan>
+                        <tspan x="305" y="255" >Practical</tspan>
+                        <!--Up-Right-->
+                        <tspan x="350" y="130" >Intellectual</tspan>
+                        <tspan x="293" y="180" >Well-</tspan>
+                        <tspan x="284" y="200" >Informed</tspan>
+                        <!--Center-->
+                        <tspan x="225" y="255" >Capable</tspan>
+                    </text>
+                    <text id="CharacterWords" visibility="hidden">
+                        <!--All pairs are outer, then inner-->
+                        <!--Up-->
+                        <tspan x="235" y="60" >Wise</tspan>
+                        <tspan x="219" y="155" >Insightful</tspan>
+                        <!--Up-Left-->
+                        <tspan x="70" y="130" >Self-Mastering</tspan>
+                        <tspan x="170" y="180" >Self-</tspan>
+                        <tspan x="155" y="200" >Reflective</tspan>
+                        <!--Left-->
+                        <tspan x="30" y="255" >Egocentric</tspan>
+                        <tspan x="140" y="245" >Person-</tspan>
+                        <tspan x="143" y="265" >alizing</tspan>
+                        <!--Down-Left-->
+                        <tspan x="80" y="390" >Self-Serving</tspan>
+                        <tspan x="173" y="300" >Self-</tspan>
+                        <tspan x="162" y="320" >Seeking</tspan>
+                        <!--Down-->
+                        <tspan x="230" y="460" >Crude</tspan>
+                        <tspan x="224" y="350" >Shallow</tspan>
+                        <!--Down-Right-->
+                        <tspan x="335" y="390" >Good-Hearted</tspan>
+                        <tspan x="290" y="300" >Well-</tspan>
+                        <tspan x="285" y="320" >Intended</tspan>
+                        <!--Right-->
+                        <tspan x="405" y="255" >Selfless</tspan>
+                        <tspan x="300" y="255" >Unselfish</tspan>
+                        <!--Up-Right-->
+                        <tspan x="350" y="130" >Altruistic</tspan>
+                        <tspan x="285" y="190" >Idealistic</tspan>
+                        <!--Center-->
+                        <tspan x="228" y="255" >Decent</tspan>
+                    </text>
                     <circle id="SummaryPoint" cx="250" cy="250" r="5" stroke="black" stroke-width="4" fill="blue" />
                 </svg>
                 <label for="DomainSelect">Domain </label>
