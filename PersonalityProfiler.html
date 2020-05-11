@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Personality Profiler</title>
+        <script>
+            var allFactors = [{
+                              name: "Extraversion",
+                              scales: ["Enthusiasm","Assertiveness"]
+                              },{
+                              name: "Agreeableness",
+                              scales: ["Compassion","Politeness"]
+                              },{
+                              name: "Neuroticism",
+                              scales: ["Volatility","Withdrawal"]
+                              },{
+                              name: "Openness",
+                              scales: ["Intellect","Openness"]
+                              },{
+                              name: "Conscientiousness",
+                              scales: ["Industriousness","Orderliness"]
+                              }];
+            var shuffledScales = [];
+            var scaleIndex = 0;
+            var allDomains = [{
+                              name: "Mood",
+                              hscales: ["Enthusiasm","Assertiveness"],
+                              vscales: ["Volatility","Withdrawal"]
+                              },{
+                              name: "Relations",
+                              hscales: ["Compassion","Politeness"],
+                              vscales: ["Enthusiasm","Assertiveness"]
+                              },{
+                              name: "AngerControl",
+                              hscales: ["Compassion","Politeness"],
+                              vscales: ["Volatility","Withdrawal"]
+                              },{
+                              name: "ImpulseControl",
+                              hscales: ["Industriousness","Orderliness"],
+                              vscales: ["Volatility","Withdrawal"]
+                              },{
+                              name: "SelfDefense",
+                              hscales: ["Intellect","Openness"],
+                              vscales: ["Volatility","Withdrawal"]
+                              },{
+                              name: "Interests",
+                              hscales: ["Intellect","Openness"],
+                              vscales: ["Enthusiasm","Assertiveness"]
+                              },{
+                              name: "Activities",
+                              hscales: ["Enthusiasm","Assertiveness"],
+                              vscales: ["Volatility","Withdrawal"]
+                              },{
+                              name: "SocialAttitudes",
+                              hscales: ["Compassion","Politeness"],
+                              vscales: ["Intellect","Openness"]
+                              },{
+                              name: "Intelligence",
+                              hscales: ["Industriousness","Orderliness"],
+                              vscales: ["Intellect","Openness"]
+                              },{
+                              name: "Character",
+                              hscales: ["Industriousness","Orderliness"],
+                              vscales: ["Compassion","Politeness"]
+                              }];
+            var domainCoordinates = {};
+            function startScales() {
+                // document.getElementById("demo").innerHTML = "Paragraph changed.";
+                document.getElementById("FactorSelect").hidden = true;
+                var selectedScales = [];
+                for (factor of allFactors) {
+                    if (document.getElementById(factor.name+"Check").checked) {
+                        selectedScales = selectedScales.concat(factor.scales);
+                    }
+                }
+                // Shuffle the factors into a random order.
+                shuffledScales = [];
+                while (selectedScales.length > 0) {
+                    var i = Math.floor(Math.random() * selectedScales.length);
+                    var singleton = selectedScales.splice(i,1);
+                    shuffledScales.push( singleton[0] );
+                }
+                // Show the first scale.
+                scaleIndex = 0;
+                document.getElementById("Scales").hidden = false;
+                document.getElementById(shuffledScales[scaleIndex]+"Scale").hidden = false;
+            }
+            function scalesBack() {
+                document.getElementById(shuffledScales[scaleIndex]+"Scale").hidden = true;
+                scaleIndex--;
+                if (scaleIndex < 0) {
+                    scaleIndex = shuffledScales.length-1;
+                }
+                document.getElementById(shuffledScales[scaleIndex]+"Scale").hidden = false;
+            }
+            function scalesNext() {
+                document.getElementById(shuffledScales[scaleIndex]+"Scale").hidden = true;
+                scaleIndex++;
+                if (scaleIndex >= shuffledScales.length) {
+                    scaleIndex = 0;
+                }
+                document.getElementById(shuffledScales[scaleIndex]+"Scale").hidden = false;
+            }
+            function scalesDone() {
+                var selectedDomain = null;
+                document.getElementById("Scales").hidden = true;
+                console.log( 'shuffledScales: '+shuffledScales.join(' ') );
+                console.log(shuffledScales);
+                console.log(shuffledScales.indexOf("Mood"));
+                for (domain of allDomains) {
+                    console.log('domain '+domain.name);
+                    var vcount = 0;
+                    var vsum = 0;
+                    for (vscale of domain.vscales) {
+                        // console.log( 'index='+shuffledScales.indexOf(vscale) )
+                        if ( shuffledScales.indexOf(vscale) != -1 ) {
+                            console.log( 'has vscale '+vscale+' value '+ document.getElementById(vscale+"Range").value )
+                            vcount++;
+                            vsum += Number( document.getElementById(vscale+"Range").value );
+                        }
+                        else {
+                            console.log('does not have vscale '+vscale);
+                        }
+                    }
+                    var hcount = 0;
+                    var hsum = 0;
+                    for (hscale of domain.hscales) {
+                        // console.log( 'index='+shuffledScales.indexOf(hscale) )
+                        if ( shuffledScales.indexOf(hscale) != -1 ) {
+                            console.log( 'has hscale '+hscale+' value '+ document.getElementById(hscale+"Range").value )
+                            hcount++;
+                            hsum += Number( document.getElementById(hscale+"Range").value );
+                        }
+                        else {
+                            console.log('does not have hscale '+hscale);
+                        }
+                    }
+                    if ( (vcount > 0) && (hcount > 0) ) {
+                        var vmean = vsum/vcount;
+                        var hmean = hsum/hcount;
+                        console.log('vmean='+vmean+', hmean='+hmean);
+                        var angle = Math.atan2(vmean,hmean);
+                        console.log('angle='+angle);
+                        var dist = Math.sqrt(vmean*vmean + hmean*hmean);
+                        console.log('dist='+dist)
+                        var maxDist = 4*Math.min(  Math.abs( 1/Math.cos(angle) ), Math.abs( 1/Math.sin(angle) )  );
+                        console.log('maxDist='+maxDist);
+                        var radius = 240*dist/maxDist;
+                        console.log('radius='+radius);
+                        var x = 250 + radius*Math.cos(angle);
+                        var y = 250 + radius*Math.sin(angle);
+                        domainCoordinates[domain.name] = { cx: x, cy: y };
+                        document.getElementById(domain.name+"Option").hidden = false;
+                        console.log('has summary point ('+x+','+y+')');
+                        if (selectedDomain == null) {
+                            console.log('is selected');
+                            selectedDomain = domain.name;
+                            document.getElementById("SummaryPoint").setAttribute("cx",x);
+                            document.getElementById("SummaryPoint").setAttribute("cy",y);
+                            document.getElementById(domain.name+"Option").selected = true;
+                        }
+                    }
+                    else {
+                        document.getElementById(domain.name+"Option").hidden = true;
+                    }
+                }
+                
+                document.getElementById("CircumplexView").hidden = false;
+            }
+            function setDomain() {
+                var domainName = document.getElementById("DomainSelect").value;
+                console.log('set domain to '+domainName);
+                document.getElementById("SummaryPoint").setAttribute("cx",domainCoordinates[domainName].cx);
+                document.getElementById("SummaryPoint").setAttribute("cy",domainCoordinates[domainName].cy);
+            }
+        </script>
+        <noscript>Personality Profiler requires JavaScript in order to function.</noscript>
+    </head>
+    <body>
+        <h1>The Concise Personality Profiler</h1>
+        <form action="">
+            <label for="Subject">Subject</label>
+            <input type="text" id="Subject" name="Subject" value="Name field">
+            <label for="As">As</label>
+            <input type="text" id="As" name="As" value="Context field"><br>
+            <div id="FactorSelect" name="FactorSelect">
+                <input type="checkbox" id="ExtraversionCheck" name="Extraversion" value="Extraversion" checked="true">
+                <label for="ExtraversionCheck"> Extraversion</label><br>
+                <input type="checkbox" id="AgreeablenessCheck" name="Agreeableness" value="Agreeableness" checked="true">
+                <label for="AgreeablenessCheck"> Agreeableness</label><br>
+                <input type="checkbox" id="NeuroticismCheck" name="Neuroticism" value="Neuroticism" checked="true">
+                <label for="NeuroticismCheck"> Neuroticism</label><br>
+                <input type="checkbox" id="OpennessCheck" name="Openness" value="Openness" checked="true">
+                <label for="OpennessCheck"> Openness</label><br>
+                <input type="checkbox" id="ConscientiousnessCheck" name="Conscientiousness" value="Conscientiousness" checked="true">
+                <label for="ConscientiousnessCheck"> Conscientiousness</label><br>
+                <input type="button" onclick="startScales()" value="Next">
+            </div>
+            <div id="Scales" name="Scales" hidden>
+                <input type="button" onclick="scalesBack()" value="Back">
+                <span id="VolatilityScale" name="VolatilityScale" hidden>
+                    <label for="VolatilityRange">Stolid</label>
+                    <input type="range" id="VolatilityRange" name="VolatilityRange" min="-4" max="4">
+                    <label for="VolatilityRange">Volatile</label>
+                </span>
+                <span id="WithdrawalScale" name="WithdrawalScale" hidden>
+                    <label for="WithdrawalRange">Outgoing</label>
+                    <input type="range" id="WithdrawalRange" name="WithdrawalRange" min="-4" max="4">
+                    <label for="WithdrawalRange">Withdrawn</label>
+                </span>
+                <span id="CompassionScale" name="CompassionScale" hidden>
+                    <label for="CompassionRange">Dispassionate</label>
+                    <input type="range" id="CompassionRange" name="CompassionRange" min="-4" max="4">
+                    <label for="CompassionRange">Compassionate</label>
+                </span>
+                <span id="PolitenessScale" name="PolitenessScale" hidden>
+                    <label for="PolitenessRange">Rude</label>
+                    <input type="range" id="PolitenessRange" name="PolitenessRange" min="-4" max="4">
+                    <label for="PolitenessRange">Polite</label>
+                </span>
+                <span id="IndustriousnessScale" name="IndustriousnessScale" hidden>
+                    <label for="IndustriousnessRange">Passive</label>
+                    <input type="range" id="IndustriousnessRange" name="IndustriousnessRange" min="-4" max="4">
+                    <label for="IndustriousnessRange">Industrious</label>
+                </span>
+                <span id="OrderlinessScale" name="OrderlinessScale" hidden>
+                    <label for="OrderlinessRange">Chaotic</label>
+                    <input type="range" id="OrderlinessRange" name="OrderlinessRange" min="-4" max="4">
+                    <label for="OrderlinessRange">Orderly</label>
+                </span>
+                <span id="EnthusiasmScale" name="EnthusiasmScale" hidden>
+                    <label for="EnthusiasmRange">Disaffected</label>
+                    <input type="range" id="EnthusiasmRange" name="EnthusiasmRange" min="-4" max="4">
+                    <label for="EnthusiasmRange">Enthusiastic</label>
+                </span>
+                <span id="AssertivenessScale" name="AssertivenessScale" hidden>
+                    <label for="AssertivenessRange">Timid</label>
+                    <input type="range" id="AssertivenessRange" name="AssertivenessRange" min="-4" max="4">
+                    <label for="AssertivenessRange">Assertive</label>
+                </span>
+                <span id="IntellectScale" name="IntellectScale" hidden>
+                    <label for="IntellectRange">Lowbrow</label>
+                    <input type="range" id="IntellectRange" name="IntellectRange" min="-4" max="4">
+                    <label for="IntellectRange">Intellectual</label>
+                </span>
+                <span id="OpennessScale" name="OpennessScale" hidden>
+                    <label for="OpennessRange">Guarded</label>
+                    <input type="range" id="OpennessRange" name="OpennessRange" min="-4" max="4">
+                    <label for="OpennessRange">Open</label>
+                </span>
+                <input type="button" onclick="scalesNext()" value="Next"><br>
+                <input type="button" onclick="scalesDone()" value="Done">
+            </div>
+            <div id="CircumplexView" name="CircumplexView" hidden>
+                <svg width="500" height="500" id="Circumplex" name="Circumplex">
+                    <circle cx="250" cy="250" r="240" stroke="black" stroke-width="4" fill="none" />
+                    <circle cx="250" cy="250" r="120" stroke="black" stroke-width="4" fill="none" />
+                    <line x1="472" y1="342" x2="28" y2="158" stroke="black" stroke-width="4" />
+                    <line x1="342" y1="472" x2="158" y2="28" stroke="black" stroke-width="4" />
+                    <line x1="158" y1="472" x2="342" y2="28" stroke="black" stroke-width="4" />
+                    <line x1="28"  y1="342" x2="472" y2="158" stroke="black" stroke-width="4" />
+                    <circle id="SummaryPoint" cx="250" cy="250" r="5" stroke="black" stroke-width="4" fill="blue" />
+                </svg>
+                <label for="DomainSelect">Domain </label>
+                <select id="DomainSelect" name="DomainSelect" onchange="setDomain()">
+                    <option id="MoodOption" value="Mood" hidden>Mood</option>
+                    <option id="RelationsOption" value="Relations" hidden>Relations</option>
+                    <option id="AngerControlOption" value="AngerControl" hidden>Anger Control</option>
+                    <option id="ImpulseControlOption" value="ImpulseControl" hidden>Impulse Control</option>
+                    <option id="SelfDefenseOption" value="SelfDefense" hidden>Self Defense</option>
+                    <option id="InterestsOption" value="Interests" hidden>Interests</option>
+                    <option id="ActivitiesOption" value="Activities" hidden>Activities</option>
+                    <option id="SocialAttitudesOption" value="SocialAttitudes" hidden>Social Attitudes</option>
+                    <option id="IntelligenceOption" value="Intelligence" hidden>Intelligence</option>
+                    <option id="CharacterOption" value="Character" hidden>Character</option>
+                </select>
+            </div>
+        </form>
+    </body>
+</html>
