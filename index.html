@@ -2,6 +2,49 @@
 <html>
     <head>
         <title>Personality Profiler</title>
+        <style>
+            input[type="range"]::-moz-range-track {
+                padding: 0 10px;
+                background: repeating-linear-gradient(to right,
+                #ccc,
+                #ccc 10%,
+                #000 10%,
+                #000 11%,
+                #ccc 11%,
+                #ccc 20%);
+            }
+        
+        .slidecontainer {
+            width: 100%; /* Width of the outside container */
+        }
+        
+        /* The slider itself */
+        .slider {
+            width: 535px; /* Full-width */
+            height: 25px; /* Specified height */
+        }
+        
+        /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+        .slider::-webkit-slider-thumb {
+            width: 25px; /* Set a specific slider handle width */
+            height: 25px; /* Slider handle height */
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 25px; /* Set a specific slider handle width */
+            height: 25px; /* Slider handle height */
+        }
+        
+        .scalelabel {
+            display: block
+        }
+        .steplist {
+            display: block
+        }
+        .stepopt {
+            display: inline
+        }
+        </style>
         <script>
             var allFactors = [{
                               name: "Extraversion",
@@ -19,6 +62,20 @@
                               name: "Conscientiousness",
                               scales: ["Industriousness","Orderliness"]
                               }];
+            // -1 indicates that a scale is negative, the higher the rating the less the person has a trait.
+            // 1 indicates that a scale is positive, the higher the rating the more the person has a trait.
+            var scaleDirection = {
+                Enthusiasm: 1,
+                Assertiveness: 1,
+                Compassion: 1,
+                Politeness: -1,
+                Volatility: 1,
+                Withdrawal: 1,
+                Intellect: 1,
+                Openness: 1,
+                Industriousness: -1,
+                Orderliness: 1
+            };
             var shuffledScales = [];
             var scaleIndex = 0;
             var allDomains = [{
@@ -47,8 +104,8 @@
                               vscales: ["Enthusiasm","Assertiveness"]// Extraversion
                               },{
                               name: "Activities",
-                              hscales: ["Enthusiasm","Assertiveness"],// Extraversion
-                              vscales: ["Industriousness","Orderliness"]// Conscientiousness
+                              hscales: ["Industriousness","Orderliness"],// Conscientiousness
+                              vscales: ["Enthusiasm","Assertiveness"]// Extraversion
                               },{
                               name: "SocialAttitudes",
                               hscales: ["Compassion","Politeness"],// Agreeableness
@@ -101,11 +158,18 @@
                 }
                 document.getElementById(shuffledScales[scaleIndex]+"Scale").hidden = false;
             }
+            // Rescale values from a range input so that the min is -1 and the max +1.
+            function getNormedScore(scaleAdj) {
+                var scale = document.getElementById(scaleAdj+"Range");
+                var scaleMin = Number(scale.min);
+                var scaleMax = Number(scale.max);
+                var scaleMidpoint = (scaleMax + scaleMin)/2;
+                return scaleDirection[scaleAdj]*( Number(scale.value) - scaleMidpoint )/( scaleMax - scaleMidpoint );
+            }
             function scalesDone() {
                 document.getElementById("Scales").hidden = true;
                 console.log( 'shuffledScales: '+shuffledScales.join(' ') );
                 console.log(shuffledScales);
-                console.log(shuffledScales.indexOf("Mood"));
                 for (domain of allDomains) {
                     console.log('domain '+domain.name);
                     var vcount = 0;
@@ -113,9 +177,10 @@
                     for (vscale of domain.vscales) {
                         // console.log( 'index='+shuffledScales.indexOf(vscale) )
                         if ( shuffledScales.indexOf(vscale) != -1 ) {
-                            console.log( 'has vscale '+vscale+' value '+ document.getElementById(vscale+"Range").value )
+                            var scaleValue = getNormedScore(vscale);
+                            console.log( 'has normed vscale '+vscale+' value '+ scaleValue )
                             vcount++;
-                            vsum += Number( document.getElementById(vscale+"Range").value );
+                            vsum += scaleValue;
                         }
                         else {
                             console.log('does not have vscale '+vscale);
@@ -126,15 +191,25 @@
                     for (hscale of domain.hscales) {
                         // console.log( 'index='+shuffledScales.indexOf(hscale) )
                         if ( shuffledScales.indexOf(hscale) != -1 ) {
-                            console.log( 'has hscale '+hscale+' value '+ document.getElementById(hscale+"Range").value )
+                            var scaleValue = getNormedScore(hscale);
+                            console.log( 'has normed hscale '+hscale+' value '+ scaleValue )
                             hcount++;
-                            hsum += Number( document.getElementById(hscale+"Range").value );
+                            hsum += scaleValue;
                         }
                         else {
                             console.log('does not have hscale '+hscale);
                         }
                     }
                     if ( (vcount > 0) && (hcount > 0) ) {
+                        // When we have the two coordinates, the most straightforward way of visualizing them would be on a square.
+                        // We normalize the scores so that the square is centered at (0,0) and has side length 2.
+                        // Instead, we want to transform to points inside a circle centered at (250,250) with radius 240.
+                        // To do this, we take each point, convert to polar coordinates, that is, from (x,y) to (angle,distance)
+                        // keep the angle the same,
+                        // but convert the distance to a fraction of the distance from the center to the edge of the square
+                        // along a ray at the same angle,
+                        // then multiply it by 240.
+                        // Finally, we convert back to cartesian coordinates.
                         var vmean = vsum/vcount;
                         var hmean = hsum/hcount;
                         console.log('vmean='+vmean+', hmean='+hmean);
@@ -142,8 +217,8 @@
                         console.log('angle='+angle);
                         var dist = Math.sqrt(vmean*vmean + hmean*hmean);
                         console.log('dist='+dist)
-                        // 10 is half the side length in scale space.
-                        var maxDist = 10*Math.min(  Math.abs( 1/Math.cos(angle) ), Math.abs( 1/Math.sin(angle) )  );
+                        // 2 is half the side length of the square.
+                        var maxDist = Math.min(  Math.abs( 1/Math.cos(angle) ), Math.abs( 1/Math.sin(angle) )  );
                         console.log('maxDist='+maxDist);
                         // 240 is the outer circle radius in circumplex space.
                         var radius = 240*dist/maxDist;
@@ -203,58 +278,55 @@
                 <label for="ConscientiousnessCheck"> Conscientiousness</label><br>
                 <input type="button" onclick="startScales()" value="Next">
             </div>
-            <div id="Scales" name="Scales" hidden>
-                <input type="button" onclick="scalesBack()" value="Back">
+            <div id="Scales" name="Scales" class="slidecontainer" hidden>
+                <input type="button" onclick="scalesBack()" value="Back"><br>
                 <span id="VolatilityScale" name="VolatilityScale" hidden>
-                    <label for="VolatilityRange">Stolid</label>
-                    <input type="range" id="VolatilityRange" name="VolatilityRange" min="-10" max="10">
-                    <label for="VolatilityRange">Volatile</label>
+                    <label for="VolatilityRange" class="scalelabel">Get upset easily.</label>
+                    <input type="range" id="VolatilityRange" name="VolatilityRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
                 <span id="WithdrawalScale" name="WithdrawalScale" hidden>
-                    <label for="WithdrawalRange">Outgoing</label>
-                    <input type="range" id="WithdrawalRange" name="WithdrawalRange" min="-10" max="10">
-                    <label for="WithdrawalRange">Withdrawn</label>
+                    <label for="WithdrawalRange" class="scalelabel">Am filled with doubt about things.</label>
+                    <input type="range" id="WithdrawalRange" name="WithdrawalRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
                 <span id="CompassionScale" name="CompassionScale" hidden>
-                    <label for="CompassionRange">Dispassionate</label>
-                    <input type="range" id="CompassionRange" name="CompassionRange" min="-10" max="10">
-                    <label for="CompassionRange">Compassionate</label>
+                    <label for="CompassionRange" class="scalelabel">Sympathize with others' feelings</label>
+                    <input type="range" id="CompassionRange" name="CompassionRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
                 <span id="PolitenessScale" name="PolitenessScale" hidden>
-                    <label for="PolitenessRange">Rude</label>
-                    <input type="range" id="PolitenessRange" name="PolitenessRange" min="-10" max="10">
-                    <label for="PolitenessRange">Polite</label>
+                    <label for="PolitenessRange" class="scalelabel">Take advantage of others.</label>
+                    <input type="range" id="PolitenessRange" name="PolitenessRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
                 <span id="IndustriousnessScale" name="IndustriousnessScale" hidden>
-                    <label for="IndustriousnessRange">Passive</label>
-                    <input type="range" id="IndustriousnessRange" name="IndustriousnessRange" min="-10" max="10">
-                    <label for="IndustriousnessRange">Industrious</label>
+                    <label for="IndustriousnessRange" class="scalelabel">Waste my time.</label>
+                    <input type="range" id="IndustriousnessRange" name="IndustriousnessRange" min="1" max="5" step="0.01" step="-1" list="steplist" class="slider">
                 </span>
                 <span id="OrderlinessScale" name="OrderlinessScale" hidden>
-                    <label for="OrderlinessRange">Chaotic</label>
-                    <input type="range" id="OrderlinessRange" name="OrderlinessRange" min="-10" max="10">
-                    <label for="OrderlinessRange">Orderly</label>
+                    <label for="OrderlinessRange" class="scalelabel">Keep things tidy.</label>
+                    <input type="range" id="OrderlinessRange" name="OrderlinessRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
                 <span id="EnthusiasmScale" name="EnthusiasmScale" hidden>
-                    <label for="EnthusiasmRange">Disaffected</label>
-                    <input type="range" id="EnthusiasmRange" name="EnthusiasmRange" min="-10" max="10">
-                    <label for="EnthusiasmRange">Enthusiastic</label>
+                    <label for="EnthusiasmRange" class="scalelabel">Make friends easily.</label>
+                    <input type="range" id="EnthusiasmRange" name="EnthusiasmRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
                 <span id="AssertivenessScale" name="AssertivenessScale" hidden>
-                    <label for="AssertivenessRange">Timid</label>
-                    <input type="range" id="AssertivenessRange" name="AssertivenessRange" min="-10" max="10">
-                    <label for="AssertivenessRange">Assertive</label>
+                    <label for="AssertivenessRange" class="scalelabel">Take charge.</label>
+                    <input type="range" id="AssertivenessRange" name="AssertivenessRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
                 <span id="IntellectScale" name="IntellectScale" hidden>
-                    <label for="IntellectRange">Lowbrow</label>
-                    <input type="range" id="IntellectRange" name="IntellectRange" min="-10" max="10">
-                    <label for="IntellectRange">Intellectual</label>
+                    <label for="IntellectRange" class="scalelabel">Am quick to understand things.</label>
+                    <input type="range" id="IntellectRange" name="IntellectRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
                 <span id="OpennessScale" name="OpennessScale" hidden>
-                    <label for="OpennessRange">Guarded</label>
-                    <input type="range" id="OpennessRange" name="OpennessRange" min="-10" max="10">
-                    <label for="OpennessRange">Open</label>
+                    <label for="OpennessRange" class="scalelabel">Believe in the importance of art.</label>
+                    <input type="range" id="OpennessRange" name="OpennessRange" min="1" max="5" step="0.01" list="steplist" class="slider">
                 </span>
+                <datalist id="steplist" class="steplist">
+                    <option value="1" label="Strongly Disagree" class="stepopt"></option>|
+                    <option value="2" label="Disagree" class="stepopt"></option>|
+                    <option value="3" label="Neither Agree Nor Disagree" class="stepopt"></option>|
+                    <option value="4" label="Agree" class="stepopt"></option>|
+                    <option value="5" label="Strongly Agree" class="stepopt"></option>
+                </datalist>
                 <input type="button" onclick="scalesNext()" value="Next"><br>
                 <input type="button" onclick="scalesDone()" value="Done">
             </div>
@@ -348,8 +420,8 @@
                         <tspan x="229" y="342" >Spon-</tspan>
                         <tspan x="227" y="357" >taneous</tspan>
                         <!--Down-Right-->
-                        <tspan x="355" y="390" >Intentional</tspan>
-                        <tspan x="287" y="317" >Directed</tspan>
+                        <tspan x="355" y="390" >Directed</tspan>
+                        <tspan x="287" y="317" >Intentional</tspan>
                         <!--Right-->
                         <tspan x="390" y="255" >Premeditated</tspan>
                         <tspan x="305" y="255" >Mindful</tspan>
@@ -423,35 +495,33 @@
                     <text id="ActivitiesWords" visibility="hidden">
                         <!--All pairs are outer, then inner-->
                         <!--Up-->
-                        <tspan x="185" y="60" >Conscientious++</tspan>
-                        <tspan x="214" y="155" >Conscien-</tspan>
-                        <tspan x="224" y="175" >tious+</tspan>
+                        <tspan x="207" y="60" >Hard-Driving</tspan>
+                        <tspan x="227" y="165" >Active</tspan>
                         <!--Up-Left-->
-                        <tspan x="65" y="130" >C++E--</tspan>
-                        <tspan x="167" y="185" >C+E-</tspan>
+                        <tspan x="65" y="130" >Fun-Loving</tspan>
+                        <tspan x="165" y="195" >Playful</tspan>
                         <!--Left-->
-                        <tspan x="20" y="255" >Extraverted--</tspan>
-                        <tspan x="140" y="245" >Extra-</tspan>
-                        <tspan x="140" y="265" >verted-</tspan>
+                        <tspan x="20" y="255" >Reckless</tspan>
+                        <tspan x="140" y="255" >Careless</tspan>
                         <!--Down-Left-->
-                        <tspan x="75" y="390" >C--E--</tspan>
-                        <tspan x="163" y="317" >C-E-</tspan>
+                        <tspan x="75" y="390" >Unproductive</tspan>
+                        <tspan x="169" y="299" >Under-</tspan>
+                        <tspan x="153" y="314" >Achieving</tspan>
                         <!--Down-->
-                        <tspan x="210" y="460" >Conscientious--</tspan>
-                        <tspan x="227" y="332" >Con-</tspan>
-                        <tspan x="217" y="352" >scientious-</tspan>
+                        <tspan x="230" y="460" >Inactive</tspan>
+                        <tspan x="227" y="334" >Under-</tspan>
+                        <tspan x="218" y="349" >Motivated</tspan>
                         <!--Down-Right-->
-                        <tspan x="355" y="390" >C--E++</tspan>
-                        <tspan x="297" y="308" >C-E+</tspan>
+                        <tspan x="355" y="390" >Plodding</tspan>
+                        <tspan x="279" y="308" >Methodical</tspan>
                         <!--Right-->
-                        <tspan x="390" y="255" >Extraverted++</tspan>
-                        <tspan x="310" y="245" >Extra-</tspan>
-                        <tspan x="310" y="265" >verted+</tspan>
+                        <tspan x="390" y="255" >Well-Prepared</tspan>
+                        <tspan x="295" y="255" >Competent</tspan>
                         <!--Up-Right-->
-                        <tspan x="340" y="130" >C++E++</tspan>
-                        <tspan x="290" y="190" >C+E-</tspan>
+                        <tspan x="340" y="130" >High-Achieving</tspan>
+                        <tspan x="287" y="195" >Efficient</tspan>
                         <!--Center-->
-                        <tspan x="227" y="255" >C=E=0</tspan>
+                        <tspan x="230" y="255" >Ready</tspan>
                     </text>
                     <text id="SelfDefenseWords" visibility="hidden">
                         <!--All pairs are outer, then inner-->
