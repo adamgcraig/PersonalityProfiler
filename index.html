@@ -2,17 +2,22 @@
 <html>
     <head>
         <title>Personality Profiler</title>
+        <!--
+         Old styles
+         
+         input[type="range"]::-moz-range-track {
+         padding: 0 10px;
+         background: repeating-linear-gradient(to right,
+         #ccc,
+         #ccc 10%,
+         #000 10%,
+         #000 11%,
+         #ccc 11%,
+         #ccc 20%);
+         }
+         
+         -->
         <style>
-            input[type="range"]::-moz-range-track {
-                padding: 0 10px;
-                background: repeating-linear-gradient(to right,
-                #ccc,
-                #ccc 10%,
-                #000 10%,
-                #000 11%,
-                #ccc 11%,
-                #ccc 20%);
-            }
         
         .slidecontainer {
             width: 100%; /* Width of the outside container */
@@ -40,7 +45,7 @@
         
             </style>
         <script>
-            var allScales = [
+      var allScales = [
                              "Enthusiasm",
                              "Assertiveness",
                              "Compassion",
@@ -51,26 +56,26 @@
                              "Openness",
                              "Industriousness",
                              "Orderliness"
-                             ];
-                             var allFactors = [{
-                                               name: "Extraversion",
-                                               scales: ["Enthusiasm","Assertiveness"]
-                                               },{
-                                               name: "Agreeableness",
-                                               scales: ["Compassion","Politeness"]
-                                               },{
-                                               name: "Neuroticism",
-                                               scales: ["Volatility","Withdrawal"]
-                                               },{
-                                               name: "Openness",
-                                               scales: ["Intellect","Openness"]
-                                               },{
-                                               name: "Conscientiousness",
-                                               scales: ["Industriousness","Orderliness"]
-                                               }];
-                                               // -1 indicates that a scale is negative, the higher the rating the less the person has a trait.
-                                               // 1 indicates that a scale is positive, the higher the rating the more the person has a trait.
-                                               var scaleDirection = {
+      ];
+      var allFactors = [{
+                                 name: "Extraversion",
+                                 scales: ["Enthusiasm","Assertiveness"]
+                               },{
+                                 name: "Agreeableness",
+                                 scales: ["Compassion","Politeness"]
+                               },{
+                                 name: "Neuroticism",
+                                 scales: ["Volatility","Withdrawal"]
+                               },{
+                                 name: "Openness",
+                                 scales: ["Intellect","Openness"]
+                               },{
+                                 name: "Conscientiousness",
+                                 scales: ["Industriousness","Orderliness"]
+       }];
+       // -1 indicates that a scale is negative, the higher the rating the less the person has a trait.
+       // 1 indicates that a scale is positive, the higher the rating the more the person has a trait.
+       var scaleDirection = {
                                                    Enthusiasm: 1,
                                                    Assertiveness: 1,
                                                    Compassion: 1,
@@ -81,7 +86,7 @@
                                                    Openness: 1,
                                                    Industriousness: -1,
                                                    Orderliness: 1
-                                               };
+        };
         var shuffledScales = [];
         var scaleIndex = 0;
         var allDomains = [{
@@ -125,26 +130,29 @@
                           hscales: ["Industriousness","Orderliness"],// Conscientiousness
                           vscales: ["Compassion","Politeness"]// Agreeableness
                           }];
-                          var domainCoordinates = {};
-                          function toggleIsSelf() {
-                              // If it is a self profile, hide the other labels.
-                              // If not, then hide the self labels.
-                              var hideOtherProfile = document.getElementById("SelfCheck").checked;
-                              var hideSelfProfile = !hideOtherProfile;
-                              console.log('is self profile: '+hideOtherProfile+', is other profile: '+hideSelfProfile);
-                              for (scale of allScales) {
-                                  console.log('changing labels for '+scale+' scale');
-                                  document.getElementById(scale+"LabelSelf").hidden = hideSelfProfile;
-                                  document.getElementById(scale+"LabelOther").hidden = hideOtherProfile;
-                              }
-                          }
+        var selectedFactors = [];
+        var domainCoordinates = {};
+        function toggleIsSelf() {
+            // If it is a self profile, hide the other labels.
+            // If not, then hide the self labels.
+            var hideOtherProfile = document.getElementById("SelfCheck").checked;
+            var hideSelfProfile = !hideOtherProfile;
+            console.log('is self profile: '+hideOtherProfile+', is other profile: '+hideSelfProfile);
+            for (scale of allScales) {
+                console.log('changing labels for '+scale+' scale');
+                document.getElementById(scale+"LabelSelf").hidden = hideSelfProfile;
+                document.getElementById(scale+"LabelOther").hidden = hideOtherProfile;
+            }
+        }
         function startScales() {
             // document.getElementById("demo").innerHTML = "Paragraph changed.";
             document.getElementById("FactorSelect").hidden = true;
             var selectedScales = [];
+            numFactors = 0;
             for (factor of allFactors) {
                 if (document.getElementById(factor.name+"Check").checked) {
                     selectedScales = selectedScales.concat(factor.scales);
+                    selectedFactors.push(factor.name);
                 }
             }
             // Shuffle the factors into a random order.
@@ -187,6 +195,29 @@
             document.getElementById("Scales").hidden = true;
             console.log( 'shuffledScales: '+shuffledScales.join(' ') );
             console.log(shuffledScales);
+            // Handle the special case where we have only one factor.
+            if (selectedFactors.length == 1) {
+                var factor = selectedFactors[0];
+                console.log( 'computing summary point for single factor '+factor );
+                var sum = 0;
+                var count = 0;
+                for ( scale of shuffledScales ) {
+                    var scaleValue = getNormedScore(scale);
+                    console.log( 'has normed scale '+scale+' value '+ scaleValue );
+                    count++;
+                    sum += scaleValue;
+                }
+                var mean = sum/count;
+                // Leave a 10% margin on either side.
+                var x = (50 + 40*mean).toString() + "%";
+                console.log( 'has summary value '+x );
+                var summaryPoint = document.getElementById(factor+"SummaryPoint");
+                summaryPoint.setAttribute("cx",x);
+                // Only show the domains for which we have a summary point.
+                document.getElementById(factor+"View").setAttribute("visibility","visible");
+                return;
+            }
+            // Handle cases where we have more than one factor.
             for (domain of allDomains) {
                 console.log('domain '+domain.name);
                 var vcount = 0;
@@ -242,16 +273,20 @@
                     console.log('radius='+radius);
                     // The circumplex is centered on (50%,50%).
                     // More x is right in both SVG and circumplex coordinates.
-                    var x = ( 50 + radius*Math.cos(angle) ).toString() + '%';
+                    var x = ( 50 + radius*Math.cos(angle) ).toString() + "%";
                     // More y is down in SVG coordinates, but positive is up in the circumplex.
-                    var y = ( 50 - radius*Math.sin(angle) ).toString() + '%';
+                    var y = ( 50 - radius*Math.sin(angle) ).toString() + "%";
                     domainCoordinates[domain.name] = { cx: x, cy: y };
                     console.log('has summary point ('+x+','+y+')');
                     var summaryPoint = document.getElementById(domain.name+"SummaryPoint");
                     summaryPoint.setAttribute("cx",x);
                     summaryPoint.setAttribute("cy",y);
                     // Only show the domains for which we have a summary point.
-                    document.getElementById(domain.name+"Circumplex").hidden = false;
+                    document.getElementById(domain.name+"Title").hidden = false;
+                    document.getElementById(domain.name+"Circumplex").setAttribute("visibility","visible");
+                    document.getElementById(domain.name+"Break").hidden = false;
+                    // Take the SVG content and turn it into a data URL in an image element to create a saveable version.
+                    // document.getElementById(domain.name+"Image").setAttribute( "src", "data:image/svg+xml;charset=UTF-8,<svg viewBox='0 0 600 600' width='100%' >"+document.getElementById(domain.name+"Circumplex").innerHTML+"</svg>" );
                 }
             }
             document.getElementById("CircumplexView").hidden = false;
@@ -282,72 +317,72 @@
             <input type="text" id="Subject" name="Subject" value="Name field"><br>
                 <label for="As">As</label><br>
                 <input type="text" id="As" name="As" value="Context field"><br>
-                    <input type="checkbox" id="SelfCheck" name="Self" value="Self Profile" checked="true" onchange="toggleIsSelf();">
-                        <label for="SelfCheck"> Self Profile</label><br>
-                        <div id="FactorSelect" name="FactorSelect">
-                            <input type="checkbox" id="ExtraversionCheck" name="Extraversion" value="Extraversion" checked="true">
-                                <label for="ExtraversionCheck"> Extraversion</label><br>
-                                <input type="checkbox" id="AgreeablenessCheck" name="Agreeableness" value="Agreeableness" checked="true">
-                                    <label for="AgreeablenessCheck"> Agreeableness</label><br>
-                                    <input type="checkbox" id="NeuroticismCheck" name="Neuroticism" value="Neuroticism" checked="true">
-                                        <label for="NeuroticismCheck"> Neuroticism</label><br>
-                                        <input type="checkbox" id="OpennessCheck" name="Openness" value="Openness" checked="true">
-                                            <label for="OpennessCheck"> Openness</label><br>
-                                            <input type="checkbox" id="ConscientiousnessCheck" name="Conscientiousness" value="Conscientiousness" checked="true">
-                                                <label for="ConscientiousnessCheck"> Conscientiousness</label><br>
-                                                <input type="button" onclick="startScales()" value="Next">
-                                                    </div>
-                        <div id="Scales" name="Scales" class="slidecontainer" hidden>
+                <input type="checkbox" id="SelfCheck" name="Self" value="Self Profile" checked="true" onchange="toggleIsSelf();">
+                <label for="SelfCheck"> Self Profile</label><br>
+                <div id="FactorSelect" name="FactorSelect">
+                    <input type="checkbox" id="ExtraversionCheck" name="Extraversion" value="Extraversion" checked="true">
+                    <label for="ExtraversionCheck"> Extraversion</label><br>
+                    <input type="checkbox" id="AgreeablenessCheck" name="Agreeableness" value="Agreeableness" checked="true">
+                    <label for="AgreeablenessCheck"> Agreeableness</label><br>
+                    <input type="checkbox" id="NeuroticismCheck" name="Neuroticism" value="Neuroticism" checked="true">
+                    <label for="NeuroticismCheck"> Neuroticism</label><br>
+                    <input type="checkbox" id="OpennessCheck" name="Openness" value="Openness" checked="true">
+                    <label for="OpennessCheck"> Openness</label><br>
+                    <input type="checkbox" id="ConscientiousnessCheck" name="Conscientiousness" value="Conscientiousness" checked="true">
+                    <label for="ConscientiousnessCheck"> Conscientiousness</label><br>
+                    <input type="button" onclick="startScales()" value="Next">
+                </div>
+                <div id="Scales" name="Scales" class="slidecontainer" hidden>
                             <input type="button" onclick="scalesBack()" value="Back"><br>
                                 <span id="VolatilityScale" name="VolatilityScale" hidden>
                                     <label id="VolatilityLabelSelf" for="VolatilityRange" class="scalelabel">Get upset easily.</label>
                                     <label id="VolatilityLabelOther" for="VolatilityRange" class="scalelabel" hidden>Gets upset easily.</label><br>
-                                    <input type="range" id="VolatilityRange" name="VolatilityRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="VolatilityRange" name="VolatilityRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <span id="WithdrawalScale" name="WithdrawalScale" hidden>
                                     <label id="WithdrawalLabelSelf" for="WithdrawalRange" class="scalelabel">Am filled with doubt about things.</label>
                                     <label id="WithdrawalLabelOther" for="WithdrawalRange" class="scalelabel" hidden>Is filled with doubt about things.</label><br>
-                                    <input type="range" id="WithdrawalRange" name="WithdrawalRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="WithdrawalRange" name="WithdrawalRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <span id="CompassionScale" name="CompassionScale" hidden>
                                     <label id="CompassionLabelSelf" for="CompassionRange" class="scalelabel">Sympathize with others' feelings</label>
                                     <label id="CompassionLabelOther" for="CompassionRange" class="scalelabel" hidden>Sympathizes with others' feelings</label><br>
-                                    <input type="range" id="CompassionRange" name="CompassionRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="CompassionRange" name="CompassionRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <span id="PolitenessScale" name="PolitenessScale" hidden>
                                     <label id="PolitenessLabelSelf" for="PolitenessRange" class="scalelabel">Take advantage of others.</label>
                                     <label id="PolitenessLabelOther" for="PolitenessRange" class="scalelabel" hidden>Takes advantage of others.</label><br>
-                                    <input type="range" id="PolitenessRange" name="PolitenessRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="PolitenessRange" name="PolitenessRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <span id="IndustriousnessScale" name="IndustriousnessScale" hidden>
                                     <label id="IndustriousnessLabelSelf" for="IndustriousnessRange" class="scalelabel">Waste my time.</label>
                                     <label id="IndustriousnessLabelOther" for="IndustriousnessRange" class="scalelabel" hidden>Wastes time.</label><br>
-                                    <input type="range" id="IndustriousnessRange" name="IndustriousnessRange" min="1" max="5" step="0.01" step="-1" list="steplist" class="slider">
+                                    <input type="range" id="IndustriousnessRange" name="IndustriousnessRange" min="1" max="5" step="0.01" step="-1" class="slider">
                                         </span>
                                 <span id="OrderlinessScale" name="OrderlinessScale" hidden>
                                     <label id="OrderlinessLabelSelf" for="OrderlinessRange" class="scalelabel">Keep things tidy.</label>
                                     <label id="OrderlinessLabelOther" for="OrderlinessRange" class="scalelabel" hidden>Keeps things tidy.</label><br>
-                                    <input type="range" id="OrderlinessRange" name="OrderlinessRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="OrderlinessRange" name="OrderlinessRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <span id="EnthusiasmScale" name="EnthusiasmScale" hidden>
                                     <label id="EnthusiasmLabelSelf" for="EnthusiasmRange" class="scalelabel">Make friends easily.</label>
                                     <label id="EnthusiasmLabelOther" for="EnthusiasmRange" class="scalelabel" hidden>Makes friends easily.</label><br>
-                                    <input type="range" id="EnthusiasmRange" name="EnthusiasmRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="EnthusiasmRange" name="EnthusiasmRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <span id="AssertivenessScale" name="AssertivenessScale" hidden>
                                     <label id="AssertivenessLabelSelf" for="AssertivenessRange" class="scalelabel">Take charge.</label>
                                     <label id="AssertivenessLabelOther" for="AssertivenessRange" class="scalelabel" hidden>Takes charge.</label><br>
-                                    <input type="range" id="AssertivenessRange" name="AssertivenessRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="AssertivenessRange" name="AssertivenessRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <span id="IntellectScale" name="IntellectScale" hidden>
                                     <label id="IntellectLabelSelf" for="IntellectRange" class="scalelabel">Am quick to understand things.</label>
                                     <label id="IntellectLabelOther" for="IntellectRange" class="scalelabel" hidden>Is quick to understand things.</label><br>
-                                    <input type="range" id="IntellectRange" name="IntellectRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="IntellectRange" name="IntellectRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <span id="OpennessScale" name="OpennessScale" hidden>
                                     <label id="OpennessLabelSelf" for="OpennessRange" class="scalelabel">Believe in the importance of art.</label>
                                     <label id="OpennessLabelOther" for="OpennessRange" class="scalelabel" hidden>Believes in the importance of art.</label><br>
-                                    <input type="range" id="OpennessRange" name="OpennessRange" min="1" max="5" step="0.01" list="steplist" class="slider">
+                                    <input type="range" id="OpennessRange" name="OpennessRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
                                 <svg viewBox="0 0 800 40" width="100%"><text text-anchor="middle">
                                     <tspan x="11%" y="20%">|</tspan>
@@ -372,8 +407,8 @@
                                     <input type="button" onclick="scalesDone()" value="Done">
                                         </div>
                         <div id="CircumplexView" name="CircumplexView" hidden>
-                            <div>Mood (Neuroticism and Extraversion)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="MoodCircumplex" name="MoodCircumplex" onclick="toggleSize('Mood');">
+                            <div id="MoodTitle" hidden>Mood (Neuroticism and Extraversion)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="MoodCircumplex" name="MoodCircumplex" onclick="toggleSize('Mood');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -419,9 +454,9 @@
                                     <tspan x="50%" y="50%" >Centered</tspan>
                                 </text>
                                 <circle id="MoodSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Anger Control (Neuroticism and Agreeableness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="AngerControlCircumplex" name="AngerControlCircumplex" onclick="toggleSize('AngerControl');">
+                            </svg><br id="MoodBreak" hidden />
+                            <div id="AngerControlTitle" hidden>Anger Control (Neuroticism and Agreeableness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="AngerControlCircumplex" name="AngerControlCircumplex" onclick="toggleSize('AngerControl');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -467,9 +502,9 @@
                                     <tspan x="50%" y="50%" >Concerned</tspan>
                                 </text>
                                 <circle id="AngerControlSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Impulse Control (Neuroticism and Conscientiousness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="ImpulseControlCircumplex" name="ImpulseControlCircumplex" onclick="toggleSize('ImpulseControl');">
+                            </svg><br id="AngerControlBreak" hidden />
+                            <div id="ImpulseControlTitle" hidden>Impulse Control (Neuroticism and Conscientiousness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="ImpulseControlCircumplex" name="ImpulseControlCircumplex" onclick="toggleSize('ImpulseControl');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -515,9 +550,9 @@
                                     <tspan x="50%" y="50%" >Neutral</tspan>
                                 </text>
                                 <circle id="ImpulseControlSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Relations (Extraversion and Agreeableness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="RelationsCircumplex" name="RelationsCircumplex" onclick="toggleSize('Relations');">
+                            </svg><br id="ImpulseControlBreak" hidden />
+                            <div id="RelationsTitle" hidden>Relations (Extraversion and Agreeableness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="RelationsCircumplex" name="RelationsCircumplex" onclick="toggleSize('Relations');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -563,9 +598,9 @@
                                     <tspan x="50%" y="50%" >Impassive</tspan>
                                 </text>
                                 <circle id="RelationsSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Interests (Extraversion and Openness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="InterestsCircumplex" name="InterestsCircumplex" onclick="toggleSize('Interests');">
+                            </svg><br id="RelationsBreak" hidden />
+                            <div id="InterestsTitle" hidden>Interests (Extraversion and Openness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="InterestsCircumplex" name="InterestsCircumplex" onclick="toggleSize('Interests');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -611,9 +646,9 @@
                                     <tspan x="50%" y="50%" >Typical</tspan>
                                 </text>
                                 <circle id="InterestsSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Activities (Extraversion and Conscientiousness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="ActivitiesCircumplex" name="ActivitiesCircumplex" onclick="toggleSize('Activities');">
+                            </svg><br id="InterestsBreak" hidden />
+                            <div id="ActivitiesTitle" hidden>Activities (Extraversion and Conscientiousness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="ActivitiesCircumplex" name="ActivitiesCircumplex" onclick="toggleSize('Activities');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -661,9 +696,9 @@
                                     <tspan x="50%" y="50%" >Ready</tspan>
                                 </text>
                                 <circle id="ActivitiesSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Self-Defense (Neuroticism and Openness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="SelfDefenseCircumplex" name="SelfDefenseCircumplex" onclick="toggleSize('SelfDefense');">
+                            </svg><br id="ActivitiesBreak" hidden />
+                            <div id="SelfDefenseTitle" hidden>Self-Defense (Neuroticism and Openness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="SelfDefenseCircumplex" name="SelfDefenseCircumplex" onclick="toggleSize('SelfDefense');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -709,9 +744,9 @@
                                     <tspan x="50%" y="50%" >Alert</tspan>
                                 </text>
                                 <circle id="SelfDefenseSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Social Attitudes (Openness and Agreeableness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="SocialAttitudesCircumplex" name="SocialAttitudesCircumplex" onclick="toggleSize('SocialAttitudes');">
+                            </svg><br id="SelfDefenseBreak" hidden />
+                            <div id="SocialAttitudesTitle" hidden>Social Attitudes (Openness and Agreeableness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="SocialAttitudesCircumplex" name="SocialAttitudesCircumplex" onclick="toggleSize('SocialAttitudes');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -757,9 +792,9 @@
                                     <tspan x="50%" y="50%" >Centrist</tspan>
                                 </text>
                                 <circle id="SocialAttitudesSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Intelligence (Openness and Conscientiousness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="IntelligenceCircumplex" name="IntelligenceCircumplex" onclick="toggleSize('Intelligence');">
+                            </svg><br id="SocialAttitudesBreak" hidden />
+                            <div id="IntelligenceTitle" hidden>Intelligence (Openness and Conscientiousness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="IntelligenceCircumplex" name="IntelligenceCircumplex" onclick="toggleSize('Intelligence');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -805,9 +840,9 @@
                                     <tspan x="50%" y="50%" >Capable</tspan>
                                 </text>
                                 <circle id="IntelligenceSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
-                            <div>Character (Agreeableness and Conscientiousness)</div>
-                            <svg viewBox="0 0 600 600" width="10%" id="CharacterCircumplex" name="CharacterCircumplex" onclick="toggleSize('Character');">
+                            </svg><br id="IntelligenceBreak" hidden />
+                            <div id="CharacterTitle" hidden>Character (Agreeableness and Conscientiousness)</div>
+                            <svg viewBox="0 0 600 600" width="10%" id="CharacterCircumplex" name="CharacterCircumplex" onclick="toggleSize('Character');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
                                 <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
                                 <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
@@ -853,9 +888,99 @@
                                     <tspan x="50%" y="50%" >Decent</tspan>
                                 </text>
                                 <circle id="CharacterSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br>
+                            </svg><br id="CharacterBreak" hidden />
                         </div>
-                        </form>
+                        <div id="SingleTraitView">
+                            <svg viewBox="0 0 800 50" width="100%" id="ExtraversionView" name="ExtraversionView" visibility="hidden">
+                                <text text-anchor="middle">
+                                <tspan x="10%" y="20%">|</tspan>
+                                <tspan x="30%" y="20%">|</tspan>
+                                <tspan x="50%" y="20%">|</tspan>
+                                <tspan x="70%" y="20%">|</tspan>
+                                <tspan x="90%" y="20%">|</tspan>
+                                <tspan x="10%" y="60%">Very Introverted</tspan>
+                                <tspan x="30%" y="60%">Introverted</tspan>
+                                <tspan x="50%" y="60%">Neutral</tspan>
+                                <tspan x="70%" y="60%">Extraverted</tspan>
+                                <tspan x="90%" y="60%">Very Extraverted</tspan>
+                                </text>
+                                <circle id="ExtraversionSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                            </svg>
+                            <svg viewBox="0 0 800 50" width="100%" id="AgreeablenessView" name="AgreeablenessView" visibility="hidden">
+                                <text text-anchor="middle">
+                                    <tspan x="10%" y="20%">|</tspan>
+                                    <tspan x="30%" y="20%">|</tspan>
+                                    <tspan x="50%" y="20%">|</tspan>
+                                    <tspan x="70%" y="20%">|</tspan>
+                                    <tspan x="90%" y="20%">|</tspan>
+                                    <tspan x="10%" y="60%">Very Disagreeable</tspan>
+                                    <tspan x="30%" y="60%">Disagreeable</tspan>
+                                    <tspan x="50%" y="60%">Neutral</tspan>
+                                    <tspan x="70%" y="60%">Agreeable</tspan>
+                                    <tspan x="90%" y="60%">Very Agreeable</tspan>
+                                </text>
+                                <circle id="AgreeablenessSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                            </svg>
+                            <svg viewBox="0 0 800 50" width="100%" id="NeuroticismView" name="NeuroticismView" visibility="hidden">
+                                <text text-anchor="middle">
+                                    <tspan x="10%" y="20%">|</tspan>
+                                    <tspan x="30%" y="20%">|</tspan>
+                                    <tspan x="50%" y="20%">|</tspan>
+                                    <tspan x="70%" y="20%">|</tspan>
+                                    <tspan x="90%" y="20%">|</tspan>
+                                    <tspan x="10%" y="60%">Very Stable</tspan>
+                                    <tspan x="30%" y="60%">Stable</tspan>
+                                    <tspan x="50%" y="60%">Neutral</tspan>
+                                    <tspan x="70%" y="60%">Neurotic</tspan>
+                                    <tspan x="90%" y="60%">Very Neurotic</tspan>
+                                </text>
+                                <circle id="NeuroticismSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                            </svg>
+                            <svg viewBox="0 0 800 50" width="100%" visibility="hidden" id="OpennessView" name="OpennessView">
+                                <text text-anchor="middle">
+                                    <tspan x="10%" y="20%">|</tspan>
+                                    <tspan x="30%" y="20%">|</tspan>
+                                    <tspan x="50%" y="20%">|</tspan>
+                                    <tspan x="70%" y="20%">|</tspan>
+                                    <tspan x="90%" y="20%">|</tspan>
+                                    <tspan x="10%" y="60%">Closed-Off</tspan>
+                                    <tspan x="30%" y="60%">Guarded</tspan>
+                                    <tspan x="50%" y="60%">Neutral</tspan>
+                                    <tspan x="70%" y="60%">Open</tspan>
+                                    <tspan x="90%" y="60%">Very Open</tspan>
+                                </text>
+                                <circle id="OpennessSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                            </svg>
+                            <svg viewBox="0 0 800 50" width="100%" id="ConscientiousnessView" name="ConscientiousnessView" visibility="hidden">
+                                <text text-anchor="middle">
+                                    <tspan x="10%" y="20%">|</tspan>
+                                    <tspan x="30%" y="20%">|</tspan>
+                                    <tspan x="50%" y="20%">|</tspan>
+                                    <tspan x="70%" y="20%">|</tspan>
+                                    <tspan x="89%" y="20%">|</tspan>
+                                    <tspan x="10%" y="60%">Negligent</tspan>
+                                    <tspan x="30%" y="60%">Careless</tspan>
+                                    <tspan x="50%" y="60%">Neutral</tspan>
+                                    <tspan x="70%" y="60%">Conscientious</tspan>
+                                    <tspan x="90%" y="60%">Very Conscientious</tspan>
+                                </text>
+                                <circle id="ConscientiousnessSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                            </svg>
+                        </div>
+                        <input type="submit" value="Reset" />
+                        <div id="ImageView" name="ImageView" hidden>
+                            <img id="MoodImage" />
+                            <img id="AngerControlImage" />
+                            <img id="ImpulseControlImage" />
+                            <img id="RelationsImage" />
+                            <img id="SelfDefenseImage" />
+                            <img id="InterestsImage" />
+                            <img id="ActivitiesImage" />
+                            <img id="SocialAttitudesImage" />
+                            <img id="IntelligenceImage" />
+                            <img id="CharacterImage" />
+                        </div>
+            </form>
     </body>
 </html>
 
