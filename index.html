@@ -269,7 +269,7 @@
                     var maxDist = Math.min(  Math.abs( 1/Math.cos(angle) ), Math.abs( 1/Math.sin(angle) )  );
                     console.log('maxDist='+maxDist);
                     // 45% is the outer circle radius in circumplex space.
-                    var radius = 45*dist/maxDist;
+                    var radius = 35*dist/maxDist;
                     console.log('radius='+radius);
                     // The circumplex is centered on (50%,50%).
                     // More x is right in both SVG and circumplex coordinates.
@@ -282,14 +282,13 @@
                     summaryPoint.setAttribute("cx",x);
                     summaryPoint.setAttribute("cy",y);
                     // Only show the domains for which we have a summary point.
-                    document.getElementById(domain.name+"Title").hidden = false;
                     document.getElementById(domain.name+"Circumplex").setAttribute("visibility","visible");
-                    document.getElementById(domain.name+"Break").hidden = false;
                     // Take the SVG content and turn it into a data URL in an image element to create a saveable version.
-                    // document.getElementById(domain.name+"Image").setAttribute( "src", "data:image/svg+xml;charset=UTF-8,<svg viewBox='0 0 600 600' width='100%' >"+document.getElementById(domain.name+"Circumplex").innerHTML+"</svg>" );
+                    document.getElementById(domain.name+"Image").setAttribute( "src", "data:image/svg+xml;charset=UTF-8,<?xml version='1.0' encoding='utf-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='1000px' height='1000px' viewBox='0 0 600 600' xml:space='preserve' >"+document.getElementById(domain.name+"Circumplex").innerHTML+"</svg>" );
                 }
             }
-            document.getElementById("CircumplexView").hidden = false;
+            // document.getElementById("CircumplexView").hidden = false;
+            document.getElementById("ImageView").hidden = false;
         }
         function toggleSize(selectedDomain) {
             circumplex = document.getElementById(selectedDomain+"Circumplex");
@@ -306,6 +305,21 @@
             }
             console.log('to:')
             console.log(circumplex.style.width)
+        }
+        function toggleImageSize(imgRef) {
+            console.log(imgRef.id);
+            console.log('from:')
+            console.log(imgRef.style.width)
+            var bigWidth = "100%";
+            var smallWidth = "10%";
+            if (imgRef.style.width == bigWidth) {
+                imgRef.style.width = smallWidth;
+            }
+            else {
+                imgRef.style.width = bigWidth;
+            }
+            console.log('to:')
+            console.log(imgRef.style.width)
         }
         </script>
         <noscript>Personality Profiler requires JavaScript in order to function.</noscript>
@@ -406,489 +420,718 @@
                                 <input type="button" onclick="scalesNext()" value="Next"><br>
                                     <input type="button" onclick="scalesDone()" value="Done">
                                         </div>
-                        <div id="CircumplexView" name="CircumplexView" hidden>
-                            <div id="MoodTitle" hidden>Mood (Neuroticism and Extraversion)</div>
+                        <div hidden>
                             <svg viewBox="0 0 600 600" width="10%" id="MoodCircumplex" name="MoodCircumplex" onclick="toggleSize('Mood');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="MoodWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >N+</tspan>
-                                    <tspan x="50%" y="15%" >Gloomy</tspan>
-                                    <tspan x="50%" y="34.4%" >Serious</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >N+E-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Worried</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Cautious</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >E-</tspan>
-                                    <tspan x="15%" y="50%" >Lethargic</tspan>
-                                    <tspan x="34.4%" y="50%" >Calm</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >N-E-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Lazy</tspan>
-                                    <tspan x="38.5%" y="60.0%" >Easy-Going</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >N-</tspan>
-                                    <tspan x="50%" y="85%" >Joyful</tspan>
-                                    <tspan x="50%" y="65.6%" >Cheerful</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >N-E+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Vivacious</tspan>
-                                    <tspan x="62.5%" y="60.0%" >Enthusiastic</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="MoodNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Mood (Neuroticism and Extraversion)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >E+</tspan>
-                                    <tspan x="85%" y="50%" >Excited</tspan>
-                                    <tspan x="65.6%" y="50%" >Energetic</tspan>
+                                    <tspan x="88.5%" y="50%" >E+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >N+E+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Driven</tspan>
-                                    <tspan x="62.0%" y="40.0%" >Restless</tspan>
+                                    <tspan x="77.224%" y="22.776%" >N+E+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >N+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >N+E-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >E-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >N-E-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >N-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >N-E+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Excited</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Driven</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Gloomy</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Worried</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Lethargic</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Lazy</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Joyful</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Vivacious</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.25%" y="50%" >Energetic</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="59.662%" y="41.338%" >Restless</tspan>
+                                    <!--Up-->
+                                    <tspan x="50.5%" y="37.75%" >Serious</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="40.338%" y="41.338%" >Cautious</tspan>
+                                    <!--Left-->
+                                    <tspan x="37.75%" y="50%" >Calm</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="57.662%" >Easy-</tspan>
+                                    <tspan x="41.338%" y="59.662%" >Going</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="62.25%" >Cheerful</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="58.662%" y="57.662%" >Enthu-</tspan>
+                                    <tspan x="58.662%" y="59.662%" >siastic</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Centered</tspan>
+                                    <tspan x="50%" y="91%" id="MoodDescription" >Moody people are moody.</tspan>
                                 </text>
                                 <circle id="MoodSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="MoodBreak" hidden />
-                            <div id="AngerControlTitle" hidden>Anger Control (Neuroticism and Agreeableness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="AngerControlCircumplex" name="AngerControlCircumplex" onclick="toggleSize('AngerControl');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="AngerControlWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >N+</tspan>
-                                    <tspan x="50%" y="15%" >Oscillating</tspan>
-                                    <tspan x="50%" y="34.4%" >Disturbed</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >N+A-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Raging</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Irate</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >A-</tspan>
-                                    <tspan x="15%" y="50%" >Hostile</tspan>
-                                    <tspan x="34.5%" y="50%" >Disagreeable</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >N-A-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Cold-Blooded</tspan>
-                                    <tspan x="38.5%" y="60.0%" >Aloof</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >N-</tspan>
-                                    <tspan x="50%" y="85%" >Stable</tspan>
-                                    <tspan x="50.3%" y="66.1%" >Undisturbed</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >N-A+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Forgiving</tspan>
-                                    <tspan x="62.5%" y="60.0%" >Tolerant</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="AngerControlNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Mood (Neuroticism and Agreeableness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >A+</tspan>
-                                    <tspan x="85%" y="50%" >Cooperative</tspan>
-                                    <tspan x="65.6%" y="50%" >Agreeable</tspan>
+                                    <tspan x="88.5%" y="50%" >A+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >N+A+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Repressed</tspan>
-                                    <tspan x="62.0%" y="40.0%" >Uptight</tspan>
+                                    <tspan x="77.224%" y="22.776%" >N+A+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >N+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >N+A-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >A-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >N-A-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >N-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >N-A+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Cooperative</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Repressed</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Oscillating</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Raging</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Hostile</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Cold-Blooded</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Stable</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Forgiving</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.5%" y="50%" >Agreeable</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="58.662%" y="41.338%" >Uptight</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="36.75%" >Disturbed</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="41.338%" >Irate</tspan>
+                                    <!--Left-->
+                                    <tspan x="37.75%" y="49%" >Dis-</tspan>
+                                    <tspan x="37.75%" y="51%" >agreeable</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="58.662%" >Aloof</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="61.25%" >Un-</tspan>
+                                    <tspan x="50%" y="63.25%" >disturbed</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="58.662%" y="58.662%" >Tolerant</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Concerned</tspan>
+                                    <tspan x="50%" y="91%" id="AngerControlDescription" >Angry people are angry.</tspan>
                                 </text>
                                 <circle id="AngerControlSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="AngerControlBreak" hidden />
-                            <div id="ImpulseControlTitle" hidden>Impulse Control (Neuroticism and Conscientiousness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="ImpulseControlCircumplex" name="ImpulseControlCircumplex" onclick="toggleSize('ImpulseControl');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="ImpulseControlWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >N+</tspan>
-                                    <tspan x="50%" y="15%" >Vacillating</tspan>
-                                    <tspan x="50%" y="34.4%" >Conflicted</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >N+C-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Impulsive</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Weak-Willed</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >C-</tspan>
-                                    <tspan x="15%" y="50%" >Reflexive</tspan>
-                                    <tspan x="34.5%" y="50%" >Distracted</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >N-C-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Uncontrolled</tspan>
-                                    <tspan x="38.5%" y="60.0%" >Relaxed</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >N-</tspan>
-                                    <tspan x="50%" y="85%" >Flowing</tspan>
-                                    <tspan x="50.3%" y="66.1%" >Spontaneous</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >N-C+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Directed</tspan>
-                                    <tspan x="62.5%" y="60.0%" >Intentional</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="ImpulseControlNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Impulse Control (Neuroticism and Conscientiousness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >C+</tspan>
-                                    <tspan x="85%" y="50%" >Premeditated</tspan>
-                                    <tspan x="65.6%" y="50%" >Mindful</tspan>
+                                    <tspan x="88.5%" y="50%" >C+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >N+C+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Over-Controlled</tspan>
-                                    <tspan x="62.0%" y="40.0%" >Controlled</tspan>
+                                    <tspan x="77.224%" y="22.776%" >N+C+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >N+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >N+C-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >C-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >N-C-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >N-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >N-C+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Premeditated</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Over-Controlled</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Vacillating</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Impulsive</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Reflexive</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Uncontrolled</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Flowing</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Directed</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.25%" y="50%" >Mindful</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="59.162%" y="40.838%" >Con-</tspan>
+                                    <tspan x="59.162%" y="42.838%" >trolled</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="35.75%" >Con-</tspan>
+                                    <tspan x="50%" y="37.75%" >flicted</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="40.338%" >Weak-</tspan>
+                                    <tspan x="41.338%" y="42.338%" >Willed</tspan>
+                                    <!--Left-->
+                                    <tspan x="38.25%" y="49%" >Dis-</tspan>
+                                    <tspan x="38.25%" y="51%" >tracted</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="58.662%" >Relaxed</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="61.25%" >Spon-</tspan>
+                                    <tspan x="50%" y="63.25%" >taneous</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="59.162%" y="57.162%" >In-</tspan>
+                                    <tspan x="59.162%" y="59.162%" >tentional</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Neutral</tspan>
+                                    <tspan x="50%" y="91%" id="ImpulseControlDescription" >Impulsive people are impulsive.</tspan>
                                 </text>
                                 <circle id="ImpulseControlSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="ImpulseControlBreak" hidden />
-                            <div id="RelationsTitle" hidden>Relations (Extraversion and Agreeableness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="RelationsCircumplex" name="RelationsCircumplex" onclick="toggleSize('Relations');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="RelationsWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >E+</tspan>
-                                    <tspan x="50%" y="15%" >Magnanimous</tspan>
-                                    <tspan x="50%" y="34.4%" >Engaging</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >E+A-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Dominating</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Forceful</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >A-</tspan>
-                                    <tspan x="15%" y="50%" >Arrogant</tspan>
-                                    <tspan x="34.5%" y="50%" >Proud</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >E-A-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Angry</tspan>
-                                    <tspan x="38.5%" y="60.0%" >Irritable</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >E-</tspan>
-                                    <tspan x="50%" y="85%" >Resentful</tspan>
-                                    <tspan x="50.3%" y="66.1%" >Touchy</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >E-A+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Submissive</tspan>
-                                    <tspan x="62.5%" y="60.0%" >Timid</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="RelationsNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Relations (Extraversion and Agreeableness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >A+</tspan>
-                                    <tspan x="85%" y="50%" >Dependent</tspan>
-                                    <tspan x="65.6%" y="50%" >Docile</tspan>
+                                    <tspan x="88.5%" y="50%" >A+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >E+A+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Loving</tspan>
-                                    <tspan x="62.0%" y="40.0%" >Friendly</tspan>
+                                    <tspan x="77.224%" y="22.776%" >E+A+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >E+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >E+A-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >A-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >E-A-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >E-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >E-A+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Dependent</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Loving</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Magnanimous</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Dominating</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Arrogant</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Angry</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Resentful</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Submissive</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.25%" y="50%" >Docile</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="59.162%" y="41.338%" >Friendly</tspan>
+                                    <!--Up-->
+                                    <tspan x="50.5%" y="36.75%" >Engaging</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="41.338%" >Forceful</tspan>
+                                    <!--Left-->
+                                    <tspan x="37.75%" y="50%" >Proud</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="58.662%" >Irritable</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="62.25%" >Touchy</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="58.662%" y="58.662%" >Timid</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Impassive</tspan>
+                                    <tspan x="50%" y="91%" id="RelationsDescription" >Relatable people are relatable.</tspan>
                                 </text>
                                 <circle id="RelationsSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="RelationsBreak" hidden />
-                            <div id="InterestsTitle" hidden>Interests (Extraversion and Openness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="InterestsCircumplex" name="InterestsCircumplex" onclick="toggleSize('Interests');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="InterestsWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >E+</tspan>
-                                    <tspan x="50%" y="15%" >Excitement-Seeking</tspan>
-                                    <tspan x="50%" y="34.4%" >Gregarious</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >E+O-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Trend-Following</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Main-Stream</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >O-</tspan>
-                                    <tspan x="15%" y="50%" >Old-Fashioned</tspan>
-                                    <tspan x="34.5%" y="50%" >Nostalgic</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >E-O-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Disinterested</tspan>
-                                    <tspan x="38.5%" y="60.0%" >Insular</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >E-</tspan>
-                                    <tspan x="50%" y="85%" >Solitary</tspan>
-                                    <tspan x="50.3%" y="66.1%" >Casual</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >E-O+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Introspective</tspan>
-                                    <tspan x="62.5%" y="60.0%" >Quirky</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="InterestsNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Interests (Extraversion and Openness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >O+</tspan>
-                                    <tspan x="85%" y="50%" >Novelty-Seeking</tspan>
-                                    <tspan x="65.6%" y="50%" >Curious</tspan>
+                                    <tspan x="88.5%" y="50%" >O+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >E+O+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Trend-Setting</tspan>
-                                    <tspan x="62.0%" y="40.0%" >Experimental</tspan>
+                                    <tspan x="77.224%" y="22.776%" >E+O+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >E+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >E+O-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >O-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >E-O-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >E-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >E-O+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Novelty-Seeking</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Trend-Setting</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Excitement-Seeking</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Trend-Following</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Old-Fashioned</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Disinterested</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Solitary</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Introspective</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.25%" y="50%" >Curious</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="59.662%" y="40.338%" >Experi-</tspan>
+                                    <tspan x="59.662%" y="42.338%" >mental</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="36.75%" >Gre-</tspan>
+                                    <tspan x="50%" y="38.75%" >garious</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="40.338%" >Main-</tspan>
+                                    <tspan x="41.338%" y="42.338%" >Stream</tspan>
+                                    <!--Left-->
+                                    <tspan x="38.25%" y="50%" >Nostalgic</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="58.662%" >Insular</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="62.25%" >Casual</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="58.662%" y="58.662%" >Quirky</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Typical</tspan>
+                                    <tspan x="50%" y="91%" id="InterestsDescription" >Interested people are interested.</tspan>
                                 </text>
                                 <circle id="InterestsSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="InterestsBreak" hidden />
-                            <div id="ActivitiesTitle" hidden>Activities (Extraversion and Conscientiousness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="ActivitiesCircumplex" name="ActivitiesCircumplex" onclick="toggleSize('Activities');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="ActivitiesWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >E+</tspan>
-                                    <tspan x="50%" y="15%" >Hard-Driving</tspan>
-                                    <tspan x="50%" y="34.4%" >Active</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >E+C-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Fun-Loving</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Playful</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >C-</tspan>
-                                    <tspan x="15%" y="50%" >Reckless</tspan>
-                                    <tspan x="34.5%" y="50%" >Careless</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >E-C-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Unproductive</tspan>
-                                    <tspan x="38.5%" y="59.5%" >Under-</tspan>
-                                    <tspan x="38.5%" y="62.5%" >Achieving</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >E-</tspan>
-                                    <tspan x="50%" y="85%" >Inactive</tspan>
-                                    <tspan x="50.3%" y="65%" >Under-</tspan>
-                                    <tspan x="50.3%" y="68%" >Motivated</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >E-C+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Plodding</tspan>
-                                    <tspan x="62.5%" y="60.0%" >Methodical</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="ActivitiesNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Activities (Extraversion and Conscientiousness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >C+</tspan>
-                                    <tspan x="85%" y="50%" >Well-Prepared</tspan>
-                                    <tspan x="65.6%" y="50%" >Competent</tspan>
+                                    <tspan x="88.5%" y="50%" >C+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >E+C+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >High-Achieving</tspan>
-                                    <tspan x="62.0%" y="40.0%" >Efficient</tspan>
+                                    <tspan x="77.224%" y="22.776%" >E+C+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >E+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >E+C-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >C-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >E-C-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >E-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >E-C+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Well-Prepared</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >High-Achieving</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Hard-Driving</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Fun-Loving</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Reckless</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Unproductive</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Inactive</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Plodding</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.25%" y="49%" >Com-</tspan>
+                                    <tspan x="62.25%" y="51%" >petent</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="60.162%" y="41.338%" >Efficient</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="37.75%" >Active</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="41.338%" >Playful</tspan>
+                                    <!--Left-->
+                                    <tspan x="37.75%" y="50%" >Careless</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="57.162%" >Under-</tspan>
+                                    <tspan x="41.338%" y="59.162%" >Achie-</tspan>
+                                    <tspan x="41.338%" y="61.162%" >ving</tspan>
+                                    <!--Down-->
+                                    <tspan x="50.25%" y="62.25%" >Under-</tspan>
+                                    <tspan x="50.25%" y="64.25%" >Motivated</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="59.662%" y="57.412%" >Me-</tspan>
+                                    <tspan x="59.662%" y="59.412%" >thodical</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Ready</tspan>
+                                    <tspan x="50%" y="91%" id="ActivitiesDescription" >Active people are active.</tspan>
                                 </text>
                                 <circle id="ActivitiesSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="ActivitiesBreak" hidden />
-                            <div id="SelfDefenseTitle" hidden>Self-Defense (Neuroticism and Openness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="SelfDefenseCircumplex" name="SelfDefenseCircumplex" onclick="toggleSize('SelfDefense');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="SelfDefenseWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >N+</tspan>
-                                    <tspan x="50%" y="15%" >Fearful</tspan>
-                                    <tspan x="50%" y="34.4%" >Anxious</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >N+O-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Maladaptive</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Defensive</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >O-</tspan>
-                                    <tspan x="15%" y="50%" >Walled-Off</tspan>
-                                    <tspan x="34.5%" y="50%" >Avoidant</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >N-O-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Uninvolved</tspan>
-                                    <tspan x="38.5%" y="60%" >Remote</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >N-</tspan>
-                                    <tspan x="50%" y="85%" >Secure</tspan>
-                                    <tspan x="50.3%" y="66.5%" >Unworried</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >N-O+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Resourceful</tspan>
-                                    <tspan x="62.5%" y="60%" >Adaptive</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="SelfDefenseNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Self-Defense (Neuroticism and Openness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >O+</tspan>
-                                    <tspan x="85%" y="50%" >Open-Minded</tspan>
-                                    <tspan x="65.6%" y="50%" >Frank</tspan>
+                                    <tspan x="88.5%" y="50%" >O+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >N+O+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Undefended</tspan>
-                                    <tspan x="62.0%" y="40.0%" >Vulnerable</tspan>
+                                    <tspan x="77.224%" y="22.776%" >N+O+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >N+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >N+O-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >O-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >N-O-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >N-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >N-O+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Open-Minded</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Undefended</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Fearful</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Maladaptive</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Walled-Off</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Uninvolved</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Secure</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Resourceful</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.25%" y="50%" >Frank</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="59.662%" y="42.338%" >Vulnerable</tspan>
+                                    <!--Up-->
+                                    <tspan x="50.25%" y="37.75%" >Anxious</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="42.338%" >Defensive</tspan>
+                                    <!--Left-->
+                                    <tspan x="37.75%" y="50%" >Avoidant</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="58.662%" >Remote</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="61.25%" >Un-</tspan>
+                                    <tspan x="50%" y="63.25%" >worried</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="59.662%" y="58.662%" >Adaptive</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Alert</tspan>
+                                    <tspan x="50%" y="91%" id="SelfDefenseDescription" >Defensive people are defensive.</tspan>
                                 </text>
                                 <circle id="SelfDefenseSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="SelfDefenseBreak" hidden />
-                            <div id="SocialAttitudesTitle" hidden>Social Attitudes (Openness and Agreeableness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="SocialAttitudesCircumplex" name="SocialAttitudesCircumplex" onclick="toggleSize('SocialAttitudes');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="SocialAttitudesWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >O+</tspan>
-                                    <tspan x="50%" y="15%" >Libertarian</tspan>
-                                    <tspan x="50.3%" y="33.5%" >Independent</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >O+A-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Iconoclastic</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Free-Thinking</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >A-</tspan>
-                                    <tspan x="15%" y="50%" >Revolutionary</tspan>
-                                    <tspan x="34.5%" y="50%" >Partisan</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >O-A-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Authoritarian</tspan>
-                                    <tspan x="38.5%" y="60%" >Conservative</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >O-</tspan>
-                                    <tspan x="50%" y="85%" >Totalitarian</tspan>
-                                    <tspan x="50.3%" y="66.5%" >Dogmatic</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >O-A+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Traditional</tspan>
-                                    <tspan x="62.5%" y="60%" >Conventional</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="SocialAttitudesNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Social Attitudes (Openness and Agreeableness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >A+</tspan>
-                                    <tspan x="85%" y="50%" >Humanitarian</tspan>
-                                    <tspan x="65.6%" y="50%" >Moderate</tspan>
+                                    <tspan x="88.5%" y="50%" >A+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >O+A+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Utopian</tspan>
-                                    <tspan x="62.0%" y="40.0%" >Liberal</tspan>
+                                    <tspan x="77.224%" y="22.776%" >O+A+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >O+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >O+A-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >A-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >O-A-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >O-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >O-A+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Humanitarian</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Utopian</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Libertarian</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Iconoclastic</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Revolutionary</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Authoritarian</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Totalitarian</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Traditional</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.50%" y="50%" >Moderate</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="58.662%" y="41.338%" >Liberal</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="35.75%" >Inde-</tspan>
+                                    <tspan x="50%" y="37.75%" >pendent</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="40.338%" >Free-</tspan>
+                                    <tspan x="41.338%" y="42.338%" >Thinking</tspan>
+                                    <!--Left-->
+                                    <tspan x="37.75%" y="50%" >Partisan</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="57.662%" >Con-</tspan>
+                                    <tspan x="41.338%" y="59.662%" >servative</tspan>
+                                    <!--Down-->
+                                    <tspan x="50.5%" y="63.75%" >Dogmatic</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="59.162%" y="57.662%" >Con-</tspan>
+                                    <tspan x="59.162%" y="59.662%" >ventional</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Centrist</tspan>
+                                    <tspan x="50%" y="91%" id="SocialAttitudesDescription" >Social people are social.</tspan>
                                 </text>
                                 <circle id="SocialAttitudesSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="SocialAttitudesBreak" hidden />
-                            <div id="IntelligenceTitle" hidden>Intelligence (Openness and Conscientiousness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="IntelligenceCircumplex" name="IntelligenceCircumplex" onclick="toggleSize('Intelligence');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="IntelligenceWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >O+</tspan>
-                                    <tspan x="50%" y="15%" >Visionary</tspan>
-                                    <tspan x="50.3%" y="33.5%" >Innovative</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >O+C-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Dreamy</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Creative</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >C-</tspan>
-                                    <tspan x="15%" y="50%" >Unrealistic</tspan>
-                                    <tspan x="34.5%" y="50%" >Impractical</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >O-C-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Illiterate</tspan>
-                                    <tspan x="38.5%" y="60%" >Uneducated</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >O-</tspan>
-                                    <tspan x="50%" y="85%" >Immitative</tspan>
-                                    <tspan x="50.3%" y="66.5%" >Sensible</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >O-C+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Logical</tspan>
-                                    <tspan x="62.5%" y="60%" >Objective</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="IntelligenceNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Intelligence (Openness and Conscientiousness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >C+</tspan>
-                                    <tspan x="85%" y="50%" >Scholarly</tspan>
-                                    <tspan x="65.6%" y="50%" >Practical</tspan>
+                                    <tspan x="88.5%" y="50%" >C+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >O+C+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Intellectual</tspan>
-                                    <tspan x="62.5%" y="40.0%" >Well-Informed</tspan>
+                                    <tspan x="77.224%" y="22.776%" >O+C+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >O+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >O+C-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >C-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >O-C-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >O-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >O-C+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Scholarly</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Intellectual</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Visionary</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Dreamy</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Unrealistic</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Illiterate</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Immitative</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Logical</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.25%" y="50%" >Practical</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="59.162%" y="40.338%" >Well-</tspan>
+                                    <tspan x="59.162%" y="42.338%" >Informed</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="36.75%" >Inno-</tspan>
+                                    <tspan x="50%" y="38.75%" >vative</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="41.338%" >Creative</tspan>
+                                    <!--Left-->
+                                    <tspan x="37.75%" y="49%" >Im-</tspan>
+                                    <tspan x="37.75%" y="51%" >practical</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="57.662%" >Un-</tspan>
+                                    <tspan x="41.338%" y="59.662%" >educated</tspan>
+                                    <!--Down-->
+                                    <tspan x="50.5%" y="62.25%" >Sensible</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="59.662%" y="58.662%" >Objective</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Capable</tspan>
+                                    <tspan x="50%" y="91%" id="IntelligenceDescription" >Intelligent people are intelligent.</tspan>
                                 </text>
                                 <circle id="IntelligenceSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="IntelligenceBreak" hidden />
-                            <div id="CharacterTitle" hidden>Character (Agreeableness and Conscientiousness)</div>
+                            </svg>
                             <svg viewBox="0 0 600 600" width="10%" id="CharacterCircumplex" name="CharacterCircumplex" onclick="toggleSize('Character');" visibility="hidden">
-                                <circle cx="50%" cy="50%" r="45%" stroke="black" stroke-width="1%" fill="none" />
-                                <circle cx="50%" cy="50%" r="22.5%" stroke="black" stroke-width="1%" fill="none" />
-                                <line x1="91.6%" y1="67.22%" x2="8.4%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <line x1="67.2%" y1="91.6%" x2="32.8%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="32.8%" y1="91.6%" x2="67.2%" y2="8.4%" stroke="black" stroke-width="1%" />
-                                <line x1="8.4%"  y1="67.2%" x2="91.6%" y2="32.8%" stroke="black" stroke-width="1%" />
-                                <circle cx="50%" cy="50%" r="9%" stroke="black" stroke-width="1%" fill="white" />
-                                <text id="CharacterWords" text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <!--All pairs are outer, then inner-->
-                                    <!--Up-->
-                                    <tspan x="50%" y="3%" >A+</tspan>
-                                    <tspan x="50%" y="15%" >Wise</tspan>
-                                    <tspan x="50.3%" y="33.5%" >Insightful</tspan>
-                                    <!--Up-Left-->
-                                    <tspan x="15.8%" y="15.8%" >A+C-</tspan>
-                                    <tspan x="25.3%" y="25.3%" >Self-Mastering</tspan>
-                                    <tspan x="38.0%" y="40.0%" >Self-Reflective</tspan>
-                                    <!--Left-->
-                                    <tspan x="3%" y="50%" >C-</tspan>
-                                    <tspan x="15%" y="50%" >Egocentric</tspan>
-                                    <tspan x="34.5%" y="50%" >Personalizing</tspan>
-                                    <!--Down-Left-->
-                                    <tspan x="15.8%" y="84.2%" >A-C-</tspan>
-                                    <tspan x="25.3%" y="74.7%" >Self-Serving</tspan>
-                                    <tspan x="38.5%" y="60%" >Self-Seeking</tspan>
-                                    <!--Down-->
-                                    <tspan x="50%" y="97%" >A-</tspan>
-                                    <tspan x="50%" y="85%" >Crude</tspan>
-                                    <tspan x="50.3%" y="66.5%" >Shallow</tspan>
-                                    <!--Down-Right-->
-                                    <tspan x="84.8%" y="84.8%" >A-C+</tspan>
-                                    <tspan x="74.7%" y="74.7%" >Good-Hearted</tspan>
-                                    <tspan x="62.5%" y="60%" >Well-Intended</tspan>
+                                <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
+                                <circle cx="50%" cy="50%" r="17.5%" stroke="black" stroke-width="1%" fill="none" />
+                                <line x1="82.336%" y1="36.606%" x2="17.664%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <line x1="63.394%" y1="17.664%" x2="36.606%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="36.606%" y1="17.664%" x2="63.394%" y2="82.336%" stroke="black" stroke-width="1%" />
+                                <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
+                                <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
+                                <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
+                                    <tspan x="50%" y="5%" id="CharacterNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="8%" >Character (Agreeableness and Conscientiousness)</tspan>
+                                    <!--Outside-->
                                     <!--Right-->
-                                    <tspan x="98%" y="50%" >C+</tspan>
-                                    <tspan x="85%" y="50%" >Selfless</tspan>
-                                    <tspan x="65.6%" y="50%" >Unselfish</tspan>
+                                    <tspan x="88.5%" y="50%" >C+</tspan>
                                     <!--Up-Right-->
-                                    <tspan x="84.7%" y="15.3%" >A+C+</tspan>
-                                    <tspan x="74.7%" y="25.3%" >Altruistic</tspan>
-                                    <tspan x="62.5%" y="40.0%" >Idealistic</tspan>
+                                    <tspan x="77.224%" y="22.776%" >A+C+</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="11.5%" >A+</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="22.776%" y="22.776%" >A+C-</tspan>
+                                    <!--Left-->
+                                    <tspan x="11.5%" y="50%" >C-</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="22.776%" y="77.224%" >A-C-</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="88.5%" >A-</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="77.224%" y="77.224%" >A-C+</tspan>
+                                    <!--Extreme-->
+                                    <!--Right-->
+                                    <tspan x="76.25%" y="50%" >Selfless</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="68.562%" y="31.438%" >Altruistic</tspan>
+                                    <!--Up-->
+                                    <tspan x="50%" y="23.75%" >Wise</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="31.438%" y="31.438%" >Self-Mastering</tspan>
+                                    <!--Left-->
+                                    <tspan x="23.75%" y="50%" >Egocentric</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="31.438%" y="68.562%" >Self-Serving</tspan>
+                                    <!--Down-->
+                                    <tspan x="50%" y="76.25%" >Crude</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="68.562%" y="68.562%" >Good-Hearted</tspan>
+                                    <!--Moderate-->
+                                    <!--Right-->
+                                    <tspan x="62.25%" y="50%" >Unselfish</tspan>
+                                    <!--Up-Right-->
+                                    <tspan x="59.662%" y="41.338%" >Idealistic</tspan>
+                                    <!--Up-->
+                                    <tspan x="50.25%" y="36.75%" >Insightful</tspan>
+                                    <!--Up-Left-->
+                                    <tspan x="41.338%" y="40.338%" >Self-</tspan>
+                                    <tspan x="41.338%" y="42.338%" >Reflective</tspan>
+                                    <!--Left-->
+                                    <tspan x="37.75%" y="49%" >Personal</tspan>
+                                    <tspan x="37.75%" y="51%" >-izing</tspan>
+                                    <!--Down-Left-->
+                                    <tspan x="41.338%" y="57.662%" >Self-</tspan>
+                                    <tspan x="41.338%" y="59.662%" >Seeking</tspan>
+                                    <!--Down-->
+                                    <tspan x="50.5%" y="62.25%" >Shallow</tspan>
+                                    <!--Down-Right-->
+                                    <tspan x="59.162%" y="57.662%" >Well-</tspan>
+                                    <tspan x="59.162%" y="59.662%" >Intended</tspan>
                                     <!--Center-->
                                     <tspan x="50%" y="50%" >Decent</tspan>
+                                    <tspan x="50%" y="91%" id="CharacterDescription" >Characteristic people are characteristic.</tspan>
                                 </text>
                                 <circle id="CharacterSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
-                            </svg><br id="CharacterBreak" hidden />
+                            </svg>
                         </div>
                         <div id="SingleTraitView">
                             <svg viewBox="0 0 800 50" width="100%" id="ExtraversionView" name="ExtraversionView" visibility="hidden">
@@ -967,19 +1210,29 @@
                                 <circle id="ConscientiousnessSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
                             </svg>
                         </div>
-                        <input type="submit" value="Reset" />
                         <div id="ImageView" name="ImageView" hidden>
-                            <img id="MoodImage" />
-                            <img id="AngerControlImage" />
-                            <img id="ImpulseControlImage" />
-                            <img id="RelationsImage" />
-                            <img id="SelfDefenseImage" />
-                            <img id="InterestsImage" />
-                            <img id="ActivitiesImage" />
-                            <img id="SocialAttitudesImage" />
-                            <img id="IntelligenceImage" />
-                            <img id="CharacterImage" />
+                            <div>Mood</div>
+                            <img id="MoodImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Anger Control</div>
+                            <img id="AngerControlImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Impulse Control</div>
+                            <img id="ImpulseControlImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Relations</div>
+                            <img id="RelationsImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Self Defense</div>
+                            <img id="SelfDefenseImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Interests</div>
+                            <img id="InterestsImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Activities</div>
+                            <img id="ActivitiesImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Social Attitudes</div>
+                            <img id="SocialAttitudesImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Intelligence</div>
+                            <img id="IntelligenceImage" width="10%" onclick="toggleImageSize(this);"/>
+                            <div>Character</div>
+                            <img id="CharacterImage" width="10%" onclick="toggleImageSize(this);"/>
                         </div>
+                        <input type="submit" value="Reset" />
             </form>
     </body>
 </html>
