@@ -92,43 +92,213 @@
         var allDomains = [{
                           name: "Mood",
                           hscales: ["Enthusiasm","Assertiveness"],// Extraversion
-                          vscales: ["Volatility","Withdrawal"]// Neuroticism
+                          vscales: ["Volatility","Withdrawal"],// Neuroticism
+                          centerWord: "Centered people are ...",
+                          innerWords: ["Energetic people are ...",
+                                       "Restless people are ...",
+                                       "Serious people are ...",
+                                       "Cautious people are ...",
+                                       "Calm people are ...",
+                                       "Easy-Going people are ...",
+                                       "Cheerful people are ...",
+                                       "Enthusiastic people are ..."],
+                          outerWords: ["Excited people are ...",
+                                       "Driven people are ...",
+                                       "Gloomy people are ...",
+                                       "Worried people are ...",
+                                       "Lethargic people are ...",
+                                       "Lazy people are ...",
+                                       "Joyful people are ...",
+                                       "Vivacious people are ..."]
                           },{
                           name: "Relations",
                           hscales: ["Compassion","Politeness"],// Agreeableness
-                          vscales: ["Enthusiasm","Assertiveness"]// Extraversion
+                          vscales: ["Enthusiasm","Assertiveness"],// Extraversion
+                          centerWord: "Impassive people are ...",
+                          innerWords: ["Docile people are ...",
+                                       "Friendly people are ...",
+                                       "Engaging people are ...",
+                                       "Forceful people are ...",
+                                       "Proud people are ...",
+                                       "Irritable people are ...",
+                                       "Touchy people are ...",
+                                       "Timid people are ..."],
+                          outerWords: ["Dependent people are ...",
+                                       "Loving people are ...",
+                                       "Magnanimous people are ...",
+                                       "Dominating people are ...",
+                                       "Arrogant people are ...",
+                                       "Angry people are ...",
+                                       "Resentful people are ...",
+                                       "Submissive people are ..."]
                           },{
                           name: "AngerControl",
                           hscales: ["Compassion","Politeness"],// Agreeableness
-                          vscales: ["Volatility","Withdrawal"]// Neuroticism
+                          vscales: ["Volatility","Withdrawal"],// Neuroticism
+                          centerWord: "Concerned people are ...",
+                          innerWords: ["Agreeable people are ...",
+                                       "Uptight people are ...",
+                                       "Disturbed people are ...",
+                                       "Irate people are ...",
+                                       "Disagreeable people are ...",
+                                       "Aloof people are ...",
+                                       "Undisturbed people are ...",
+                                       "Tolerant people are ..."],
+                          outerWords: ["Cooperative people are ...",
+                                       "Repressed people are ...",
+                                       "Oscillating people are ...",
+                                       "Raging people are ...",
+                                       "Hostile people are ...",
+                                       "Cold-Blooded people are ...",
+                                       "Stable people are ...",
+                                       "Forgiving people are ..."]
                           },{
                           name: "ImpulseControl",
                           hscales: ["Industriousness","Orderliness"],// Conscientiousness
-                          vscales: ["Volatility","Withdrawal"]// Neuroticism
+                          vscales: ["Volatility","Withdrawal"],// Neuroticism
+                          centerWord: "Neutral people are ...",
+                          innerWords: ["Mindful people are ...",
+                                       "Controlled people are ...",
+                                       "Conflicted people are ...",
+                                       "Weak-Willed people are ...",
+                                       "Distracted people are ...",
+                                       "Relaxed people are ...",
+                                       "Spontaneous people are ...",
+                                       "Intentional people are ..."],
+                          outerWords: ["Premeditated people are ...",
+                                       "Over-Controlled people are ...",
+                                       "Vacillating people are ...",
+                                       "Impulsive people are ...",
+                                       "Reflexive people are ...",
+                                       "Uncontrolled people are ...",
+                                       "Flowing people are ...",
+                                       "Directed people are ..."]
                           },{
                           name: "SelfDefense",
                           hscales: ["Intellect","Openness"],// Openness
-                          vscales: ["Volatility","Withdrawal"]// Neuroticism
+                          vscales: ["Volatility","Withdrawal"],// Neuroticism
+                          centerWord: "Alert people are ...",
+                          innerWords: ["Frank people are ...",
+                                       "Vulnerable people are ...",
+                                       "Anxious people are ...",
+                                       "Defensive people are ...",
+                                       "Avoidant people are ...",
+                                       "Remote people are ...",
+                                       "Unworried people are ...",
+                                       "Adaptive people are ..."],
+                          outerWords: ["Open-Minded people are ...",
+                                       "Undefended people are ...",
+                                       "Fearful people are ...",
+                                       "Maladaptive people are ...",
+                                       "Walled-Off people are ...",
+                                       "Uninvolved people are ...",
+                                       "Secure people are ...",
+                                       "Resourceful people are ..."]
                           },{
                           name: "Interests",
                           hscales: ["Intellect","Openness"],// Openness
-                          vscales: ["Enthusiasm","Assertiveness"]// Extraversion
+                          vscales: ["Enthusiasm","Assertiveness"],// Extraversion
+                          centerWord: "Typical people are ...",
+                          innerWords: ["Curious people are ...",
+                                       "Experimental people are ...",
+                                       "Gregarious people are ...",
+                                       "Main-Stream people are ...",
+                                       "Nostalgic people are ...",
+                                       "Insular people are ...",
+                                       "Casual people are ...",
+                                       "Quirky people are ..."],
+                          outerWords: ["Novelty-Seeking people are ...",
+                                       "Trend-Setting people are ...",
+                                       "Excitement-Seeking people are ...",
+                                       "Trend-Following people are ...",
+                                       "Old-Fashioned people are ...",
+                                       "Disinterested people are ...",
+                                       "Solitary people are ...",
+                                       "Introspective people are ..."]
                           },{
                           name: "Activities",
                           hscales: ["Industriousness","Orderliness"],// Conscientiousness
-                          vscales: ["Enthusiasm","Assertiveness"]// Extraversion
+                          vscales: ["Enthusiasm","Assertiveness"],// Extraversion
+                          centerWord: "Ready people are ...",
+                          innerWords: ["Competent people are ...",
+                                       "Efficient people are ...",
+                                       "Active people are ...",
+                                       "Playful people are ...",
+                                       "Careless people are ...",
+                                       "Under-Achieving people are ...",
+                                       "Under-Motivated people are ...",
+                                       "Methodical people are ..."],
+                          outerWords: ["Well-Prepared people are ...",
+                                       "High-Achieving people are ...",
+                                       "Hard-Driving people are ...",
+                                       "Fun-Loving people are ...",
+                                       "Reckless people are ...",
+                                       "Unproductive people are ...",
+                                       "Inactive people are ...",
+                                       "Plodding people are ..."]
                           },{
                           name: "SocialAttitudes",
                           hscales: ["Compassion","Politeness"],// Agreeableness
-                          vscales: ["Intellect","Openness"]// Openness
+                          vscales: ["Intellect","Openness"],// Openness
+                          centerWord: "Centrist people are ...",
+                          innerWords: ["Moderate people are ...",
+                                       "Liberal people are ...",
+                                       "Independent people are ...",
+                                       "Free-Thinking people are ...",
+                                       "Partisan people are ...",
+                                       "Conservative people are ...",
+                                       "Dogmatic people are ...",
+                                       "Conventional people are ..."],
+                          outerWords: ["Humanitarian people are ...",
+                                       "Utopian people are ...",
+                                       "Libertarian people are ...",
+                                       "Iconoclastic people are ...",
+                                       "Revolutionary people are ...",
+                                       "Authoritarian people are ...",
+                                       "Totalitarian people are ...",
+                                       "Traditional people are ..."]
                           },{
                           name: "Intelligence",
                           hscales: ["Industriousness","Orderliness"],// Conscientiousness
-                          vscales: ["Intellect","Openness"]// Openness
+                          vscales: ["Intellect","Openness"],// Openness
+                          centerWord: "Capable people are ...",
+                          innerWords: ["Practical people are ...",
+                                       "Well-Informed people are ...",
+                                       "Innovative people are ...",
+                                       "Creative people are ...",
+                                       "Impractical people are ...",
+                                       "Uneducated people are ...",
+                                       "Sensible people are ...",
+                                       "Objective people are ..."],
+                          outerWords: ["Scholarly people are ...",
+                                       "Intellectual people are ...",
+                                       "Visionary people are ...",
+                                       "Dreamy people are ...",
+                                       "Unrealistic people are ...",
+                                       "Illiterate people are ...",
+                                       "Immitative people are ...",
+                                       "Logical people are ..."]
                           },{
                           name: "Character",
                           hscales: ["Industriousness","Orderliness"],// Conscientiousness
-                          vscales: ["Compassion","Politeness"]// Agreeableness
+                          vscales: ["Compassion","Politeness"],// Agreeableness
+                          centerWord: "Decent people are ...",
+                          innerWords: ["Unselfish people are ...",
+                                       "Idealistic people are ...",
+                                       "Insightful people are ...",
+                                       "Self-Reflective people are ...",
+                                       "Personalizing people are ...",
+                                       "Self-Seeking people are ...",
+                                       "Shallow people are ...",
+                                       "Well-Intended people are ..."],
+                          outerWords: ["Selfless people are ...",
+                                       "Altruistic people are ...",
+                                       "Wise people are ...",
+                                       "Self-Mastering people are ...",
+                                       "Egocentric people are ...",
+                                       "Self-Serving people are ...",
+                                       "Crude people are ...",
+                                       "Good-Hearted people are ..."]
                           }];
         var selectedFactors = [];
         var domainCoordinates = {};
@@ -195,6 +365,7 @@
             document.getElementById("Scales").hidden = true;
             console.log( 'shuffledScales: '+shuffledScales.join(' ') );
             console.log(shuffledScales);
+            var nameAsDate = document.getElementById("Subject").value + " as " + document.getElementById("As").value + ", " + new Date();
             // Handle the special case where we have only one factor.
             if (selectedFactors.length == 1) {
                 var factor = selectedFactors[0];
@@ -268,8 +439,9 @@
                     // 2 is half the side length of the square.
                     var maxDist = Math.min(  Math.abs( 1/Math.cos(angle) ), Math.abs( 1/Math.sin(angle) )  );
                     console.log('maxDist='+maxDist);
-                    // 45% is the outer circle radius in circumplex space.
-                    var radius = 35*dist/maxDist;
+                    // 35% is the outer circle radius in circumplex space.
+                    var maxRadius = 35;
+                    var radius = maxRadius*dist/maxDist;
                     console.log('radius='+radius);
                     // The circumplex is centered on (50%,50%).
                     // More x is right in both SVG and circumplex coordinates.
@@ -281,8 +453,53 @@
                     var summaryPoint = document.getElementById(domain.name+"SummaryPoint");
                     summaryPoint.setAttribute("cx",x);
                     summaryPoint.setAttribute("cy",y);
-                    // Only show the domains for which we have a summary point.
-                    document.getElementById(domain.name+"Circumplex").setAttribute("visibility","visible");
+                    // Set the top title for each circumplex to the name, as, and date-time.
+                    document.getElementById(domain.name+"NameAs").innerHTML = nameAsDate;
+                    // Figure out in which sector the summary point falls.
+                    var description;
+                    var sector;
+                    if (angle < -2.7489) {
+                        sector = 4;
+                    }
+                    else if (angle < -1.9635) {
+                        sector = 5;
+                    }
+                    else if (angle < -1.1781) {
+                        sector = 6;
+                    }
+                    else if (angle < -0.3927) {
+                        sector = 7;
+                    }
+                    else if (angle < 0.3927) {
+                        sector = 0;
+                    }
+                    else if (angle < 1.1781) {
+                        sector = 1;
+                    }
+                    else if (angle < 1.9635) {
+                        sector = 2;
+                    }
+                    else if (angle < 2.7489) {
+                        sector = 3;
+                    }
+                    else {
+                        // It wraps back around to 0 for the rest of the circle.
+                        sector = 4;
+                    }
+                    // Figure out whether we are in the center, inner, or outer circle.
+                    if (radius < maxRadius/5) {
+                        description = domain.centerWord;
+                    }
+                    else if (radius < maxRadius/2) {
+                        description = domain.innerWords[sector];
+                    }
+                    else {
+                        description = domain.outerWords[sector];
+                    }
+                    document.getElementById(domain.name+"Description").innerHTML = description;
+                    // Since the div containing the SVG elements remains hidden, we no longer hide and show them individually.
+                    // Only hide and show the images.
+                    // document.getElementById(domain.name+"Circumplex").setAttribute("visibility","visible");
                     // Take the SVG content and turn it into a data URL in an image element to create a saveable version.
                     document.getElementById(domain.name+"Image").setAttribute( "src", "data:image/svg+xml;charset=UTF-8,<?xml version='1.0' encoding='utf-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='1000px' height='1000px' viewBox='0 0 600 600' xml:space='preserve' >"+document.getElementById(domain.name+"Circumplex").innerHTML+"</svg>" );
                 }
@@ -430,7 +647,7 @@
                                 <line x1="17.664%" y1="36.606%" x2="82.336%" y2="63.394%" stroke="black" stroke-width="1%" />
                                 <circle cx="50%" cy="50%" r="7%" stroke="black" stroke-width="1%" fill="white" />
                                 <text text-anchor="middle" dominant-baseline="middle" font-size="85%">
-                                    <tspan x="50%" y="5%" id="MoodNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="5%" id="MoodNameAs" >Person as Self on xx/xx/xxxx</tspan>
                                     <tspan x="50%" y="8%" >Mood (Neuroticism and Extraversion)</tspan>
                                     <!--Outside-->
                                     <!--Right-->
