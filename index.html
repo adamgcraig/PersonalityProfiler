@@ -16,6 +16,26 @@
          #ccc 20%);
          }
          
+         
+         /* The slider itself */
+         .slider {
+         width: 80%; /* Full-width */
+         height: 25px; /* Specified height */
+         text-align: center;
+         }
+         
+         /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+         .slider::-webkit-slider-thumb {
+         width: 80%; /* Set a specific slider handle width */
+         height: 25px; /* Slider handle height */
+         text-align: center;
+         }
+         
+         .slider::-moz-range-thumb {
+         width: 80%; /* Set a specific slider handle width */
+         height: 25px; /* Slider handle height */
+         text-align: center;
+         }
          -->
         <style>
         
@@ -26,20 +46,18 @@
         /* The slider itself */
         .slider {
             width: 80%; /* Full-width */
-            height: 25px; /* Specified height */
             text-align: center;
         }
         
         /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+        
         .slider::-webkit-slider-thumb {
-            width: 80%; /* Set a specific slider handle width */
-            height: 25px; /* Slider handle height */
+            width: 10%; /* Set a specific slider handle width */
             text-align: center;
         }
         
         .slider::-moz-range-thumb {
-            width: 80%; /* Set a specific slider handle width */
-            height: 25px; /* Slider handle height */
+            width: 10%; /* Set a specific slider handle width */
             text-align: center;
         }
         
