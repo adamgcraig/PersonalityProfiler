@@ -39,6 +39,27 @@
          -->
         <style>
         
+        body {
+            text-align: center;
+        }
+        
+        form {
+            font-size: 30px;
+        }
+        
+        input {
+            font-size: 30px;
+        }
+        
+        .factorselect {
+            position: absolute;
+            left: 40%;
+            text-align: left;
+        }
+        
+        .factorcheck {
+        }
+        
         .slidecontainer {
             width: 100%; /* Width of the outside container */
         }
@@ -77,20 +98,55 @@
       ];
       var allFactors = [{
                                  name: "Extraversion",
-                                 scales: ["Enthusiasm","Assertiveness"]
+                                 scales: ["Enthusiasm","Assertiveness"],
+                                 descriptions: [
+                                      "Very Introverted people are very introverted.",
+                                      "Introverted people are introverted.",
+                                      "Neutral people are neutral.",
+                                      "Extraverted people are extraverted.",
+                                      "Very Extraverted people are very extraverted."
+                                 ]
                                },{
                                  name: "Agreeableness",
-                                 scales: ["Compassion","Politeness"]
+                                 scales: ["Compassion","Politeness"],
+                                 descriptions: [
+                                      "Very Disagreeable people are very disagreeable.",
+                                      "Disagreeable people are disagreeable.",
+                                      "Neutral people are neutral.",
+                                      "Agreeable people are agreeable.",
+                                      "Very Agreeable people are very agreeable."
+                                      ]
                                },{
                                  name: "Neuroticism",
-                                 scales: ["Volatility","Withdrawal"]
+                                 scales: ["Volatility","Withdrawal"],
+                                 descriptions: [
+                                      "Very Stable people are very stable.",
+                                      "Stable people are stable.",
+                                      "Neutral people are neutral.",
+                                      "Neurotic people are neurotic.",
+                                      "Very Neurotic people are very neurotic."
+                                      ]
                                },{
                                  name: "Openness",
-                                 scales: ["Intellect","Openness"]
+                                 scales: ["Intellect","Openness"],
+                                 descriptions: [
+                                      "Very Closed-Off people are closed-off.",
+                                      "Guarded people are guarded.",
+                                      "Neutral people are neutral.",
+                                      "Open people are open.",
+                                      "Very Open people are very open."
+                                      ]
                                },{
                                  name: "Conscientiousness",
-                                 scales: ["Industriousness","Orderliness"]
-       }];
+                                 scales: ["Industriousness","Orderliness"],
+                                 descriptions: [
+                                      "Very Negligent people are negligent.",
+                                      "Careless people are careless.",
+                                      "Neutral people are neutral.",
+                                      "Conscientious people are conscientious.",
+                                      "Very Conscientious people are very conscientious."
+                                      ]
+                               }];
        // -1 indicates that a scale is negative, the higher the rating the less the person has a trait.
        // 1 indicates that a scale is positive, the higher the rating the more the person has a trait.
        var scaleDirection = {
@@ -319,6 +375,9 @@
                                        "Good-Hearted people are ..."]
                           }];
         var selectedFactors = [];
+        // factorDescriptions gets set in startScales and used in scalesDone if we are plotting a single factor.
+        // It is set to the descriptions of the last factor selected, which in this case is the only one.
+        var factorDescriptions;
         var domainCoordinates = {};
         function toggleIsSelf() {
             // If it is a self profile, hide the other labels.
@@ -341,6 +400,7 @@
                 if (document.getElementById(factor.name+"Check").checked) {
                     selectedScales = selectedScales.concat(factor.scales);
                     selectedFactors.push(factor.name);
+                    factorDescriptions = factor.descriptions;
                 }
             }
             // Shuffle the factors into a random order.
@@ -398,12 +458,36 @@
                 }
                 var mean = sum/count;
                 // Leave a 10% margin on either side.
-                var x = (50 + 40*mean).toString() + "%";
+                var xnum = 50 + 40*mean;
+                var x = xnum.toString() + "%";
                 console.log( 'has summary value '+x );
                 var summaryPoint = document.getElementById(factor+"SummaryPoint");
                 summaryPoint.setAttribute("cx",x);
-                // Only show the domains for which we have a summary point.
-                document.getElementById(factor+"View").setAttribute("visibility","visible");
+                // Set the top title for each circumplex to the name, as, and date-time.
+                document.getElementById(factor+"NameAs").innerHTML = nameAsDate;
+                // Choose the factor trait description based on the label to which the summary point is closest.
+                var descriptionIndex;
+                if (xnum <= 20) {
+                    descriptionIndex = 0;// very left
+                }
+                else if (xnum <= 40) {
+                    descriptionIndex = 1;// left
+                }
+                else if (xnum <= 60) {
+                    descriptionIndex = 2;// neutral
+                }
+                else if (xnum <= 80) {
+                    descriptionIndex = 3;// right
+                }
+                else {
+                    descriptionIndex = 4;// very right
+                }
+                document.getElementById(factor+"Description").innerHTML = factorDescriptions[descriptionIndex];
+                // Take the SVG content and turn it into a data URL in an image element to create a saveable version.
+                document.getElementById("SingleTraitImage").setAttribute( "src", "data:image/svg+xml;charset=UTF-8,<?xml version='1.0' encoding='utf-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='1000px' height='200px' viewBox='0 0 800 100' xml:space='preserve' >"+document.getElementById(factor+"SVG").innerHTML+"</svg>" );
+                // document.getElementById("SingleTraitImage").setAttribute("visibility","visible");
+                document.getElementById("SingleTraitImageView").hidden = false;
+                document.getElementById("ResetButton").hidden = false;
                 return;
             }
             // Handle cases where we have more than one factor.
@@ -521,9 +605,10 @@
                     // Take the SVG content and turn it into a data URL in an image element to create a saveable version.
                     document.getElementById(domain.name+"Image").setAttribute( "src", "data:image/svg+xml;charset=UTF-8,<?xml version='1.0' encoding='utf-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='1000px' height='1000px' viewBox='0 0 600 600' xml:space='preserve' >"+document.getElementById(domain.name+"Circumplex").innerHTML+"</svg>" );
                 }
+                // document.getElementById("CircumplexView").hidden = false;
+                document.getElementById("ImageView").hidden = false;
+                document.getElementById("ResetButton").hidden = false;
             }
-            // document.getElementById("CircumplexView").hidden = false;
-            document.getElementById("ImageView").hidden = false;
         }
         function toggleSize(selectedDomain) {
             circumplex = document.getElementById(selectedDomain+"Circumplex");
@@ -559,30 +644,34 @@
         </script>
         <noscript>Personality Profiler requires JavaScript in order to function.</noscript>
     </head>
-    <body style="text-align: center;">
+    <body>
         <h1>The Concise Personality Profiler</h1>
         <form action="">
             <label for="Subject">Subject</label><br>
             <input type="text" id="Subject" name="Subject" value="Name field"><br>
                 <label for="As">As</label><br>
                 <input type="text" id="As" name="As" value="Context field"><br>
-                <input type="checkbox" id="SelfCheck" name="Self" value="Self Profile" checked="true" onchange="toggleIsSelf();">
-                <label for="SelfCheck"> Self Profile</label><br>
-                <div id="FactorSelect" name="FactorSelect">
-                    <input type="checkbox" id="ExtraversionCheck" name="Extraversion" value="Extraversion" checked="true">
-                    <label for="ExtraversionCheck"> Extraversion</label><br>
-                    <input type="checkbox" id="AgreeablenessCheck" name="Agreeableness" value="Agreeableness" checked="true">
-                    <label for="AgreeablenessCheck"> Agreeableness</label><br>
-                    <input type="checkbox" id="NeuroticismCheck" name="Neuroticism" value="Neuroticism" checked="true">
-                    <label for="NeuroticismCheck"> Neuroticism</label><br>
-                    <input type="checkbox" id="OpennessCheck" name="Openness" value="Openness" checked="true">
-                    <label for="OpennessCheck"> Openness</label><br>
-                    <input type="checkbox" id="ConscientiousnessCheck" name="Conscientiousness" value="Conscientiousness" checked="true">
-                    <label for="ConscientiousnessCheck"> Conscientiousness</label><br>
+                    <br>
+                <div id="FactorSelect" name="FactorSelect" class="factorselect">
+                    <input type="checkbox" id="SelfCheck" name="Self" value="Self Profile" checked="true" onchange="toggleIsSelf();">
+                    <label for="SelfCheck"> Self Profile</label><br>
+                    <br>
+                    <span class="factorcheck"><input type="checkbox" id="ExtraversionCheck" name="Extraversion" value="Extraversion" checked="true">
+                    <label for="ExtraversionCheck" style="text-align: left;"> Extraversion</label></span><br>
+                    <span class="factorcheck"><input type="checkbox" id="AgreeablenessCheck" name="Agreeableness" value="Agreeableness" checked="true" class="factorcheck">
+                    <label for="AgreeablenessCheck"> Agreeableness</label></span><br>
+                    <span class="factorcheck"><input type="checkbox" id="NeuroticismCheck" name="Neuroticism" value="Neuroticism" checked="true" class="factorcheck">
+                    <label for="NeuroticismCheck"> Neuroticism</label></span><br>
+                    <span class="factorcheck"><input type="checkbox" id="OpennessCheck" name="Openness" value="Openness" checked="true" class="factorcheck">
+                    <label for="OpennessCheck"> Openness</label></span><br>
+                    <span class="factorcheck"><input type="checkbox" id="ConscientiousnessCheck" name="Conscientiousness" value="Conscientiousness" checked="true" class="factorcheck">
+                    <label for="ConscientiousnessCheck"> Conscientiousness</label></span><br>
+                    <br>
                     <input type="button" onclick="startScales()" value="Next">
                 </div>
+                <br>
                 <div id="Scales" name="Scales" class="slidecontainer" hidden>
-                            <input type="button" onclick="scalesBack()" value="Back"><br>
+                            <input type="button" onclick="scalesBack()" value="Back"><br><br>
                                 <span id="VolatilityScale" name="VolatilityScale" hidden>
                                     <label id="VolatilityLabelSelf" for="VolatilityRange" class="scalelabel">Get upset easily.</label>
                                     <label id="VolatilityLabelOther" for="VolatilityRange" class="scalelabel" hidden>Gets upset easily.</label><br>
@@ -633,7 +722,7 @@
                                     <label id="OpennessLabelOther" for="OpennessRange" class="scalelabel" hidden>Believes in the importance of art.</label><br>
                                     <input type="range" id="OpennessRange" name="OpennessRange" min="1" max="5" step="0.01" class="slider">
                                         </span>
-                                <svg viewBox="0 0 800 40" width="100%"><text text-anchor="middle">
+                                <svg viewBox="0 0 800 40" width="100%"><text text-anchor="middle" font-size="19px">
                                     <tspan x="11%" y="20%">|</tspan>
                                     <tspan x="30.6%" y="20%">|</tspan>
                                     <tspan x="50.2%" y="20%">|</tspan>
@@ -652,9 +741,35 @@
                                     <option value="4" label="Agree" class="stepopt"></option>
                                     <option value="5" label="Strongly Agree" class="stepopt"></option>
                                 </datalist>
-                                <input type="button" onclick="scalesNext()" value="Next"><br>
+                                <input type="button" onclick="scalesNext()" value="Next"><br><br>
                                     <input type="button" onclick="scalesDone()" value="Done">
                                         </div>
+                <div id="ImageView" name="ImageView" hidden>
+                    <div>Mood</div>
+                    <img id="MoodImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Anger Control</div>
+                    <img id="AngerControlImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Impulse Control</div>
+                    <img id="ImpulseControlImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Relations</div>
+                    <img id="RelationsImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Self Defense</div>
+                    <img id="SelfDefenseImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Interests</div>
+                    <img id="InterestsImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Activities</div>
+                    <img id="ActivitiesImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Social Attitudes</div>
+                    <img id="SocialAttitudesImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Intelligence</div>
+                    <img id="IntelligenceImage" width="10%" onclick="toggleImageSize(this);"/>
+                    <div>Character</div>
+                    <img id="CharacterImage" width="10%" onclick="toggleImageSize(this);"/><br><br>
+                </div>
+                <div id="SingleTraitImageView" hidden>
+                    <img id="SingleTraitImage" width="100%"/>
+                </div>
+                <input id="ResetButton" type="submit" value="Reset" hidden />
                         <div hidden>
                             <svg viewBox="0 0 600 600" width="10%" id="MoodCircumplex" name="MoodCircumplex" onclick="toggleSize('Mood');" visibility="hidden">
                                 <circle cx="50%" cy="50%" r="35%" stroke="black" stroke-width="1%" fill="none" />
@@ -1368,106 +1483,103 @@
                                 <circle id="CharacterSummaryPoint" cx="50%" cy="50%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
                             </svg>
                         </div>
-                        <div id="SingleTraitView">
-                            <svg viewBox="0 0 800 50" width="100%" id="ExtraversionView" name="ExtraversionView" visibility="hidden">
-                                <text text-anchor="middle">
-                                <tspan x="10%" y="20%">|</tspan>
-                                <tspan x="30%" y="20%">|</tspan>
-                                <tspan x="50%" y="20%">|</tspan>
-                                <tspan x="70%" y="20%">|</tspan>
-                                <tspan x="90%" y="20%">|</tspan>
-                                <tspan x="10%" y="60%">Very Introverted</tspan>
-                                <tspan x="30%" y="60%">Introverted</tspan>
-                                <tspan x="50%" y="60%">Neutral</tspan>
-                                <tspan x="70%" y="60%">Extraverted</tspan>
-                                <tspan x="90%" y="60%">Very Extraverted</tspan>
+                        <div id="SingleTraitSVG" hidden>
+                            <svg viewBox="0 0 800 100" width="100%" id="ExtraversionSVG" name="ExtraversionSVG" visibility="hidden">
+                                <line x1="9.7%" y1="53%" x2="89.7%" y2="53%" stroke="black" stroke-width="1%" />
+                                <text text-anchor="middle" font-size="19px">
+                                <tspan x="50%" y="15%" id="ExtraversionNameAs" >Person as Self</tspan>
+                                <tspan x="50%" y="35%" >Extraversion</tspan>
+                                <tspan x="10%" y="60%">|</tspan>
+                                <tspan x="30%" y="60%">|</tspan>
+                                <tspan x="50%" y="60%">|</tspan>
+                                <tspan x="70%" y="60%">|</tspan>
+                                <tspan x="90%" y="60%">|</tspan>
+                                <tspan x="10%" y="80%">Very Introverted</tspan>
+                                <tspan x="30%" y="80%">Introverted</tspan>
+                                <tspan x="50%" y="80%">Neutral</tspan>
+                                <tspan x="70%" y="80%">Extraverted</tspan>
+                                <tspan x="90%" y="80%">Very Extraverted</tspan>
+                                <tspan x="50%" y="100%" id="ExtraversionDescription" >Extraverted people are extraverted. [placeholder]</tspan>
                                 </text>
-                                <circle id="ExtraversionSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                                <circle id="ExtraversionSummaryPoint" cx="50%" cy="53%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
                             </svg>
-                            <svg viewBox="0 0 800 50" width="100%" id="AgreeablenessView" name="AgreeablenessView" visibility="hidden">
-                                <text text-anchor="middle">
-                                    <tspan x="10%" y="20%">|</tspan>
-                                    <tspan x="30%" y="20%">|</tspan>
-                                    <tspan x="50%" y="20%">|</tspan>
-                                    <tspan x="70%" y="20%">|</tspan>
-                                    <tspan x="90%" y="20%">|</tspan>
-                                    <tspan x="10%" y="60%">Very Disagreeable</tspan>
-                                    <tspan x="30%" y="60%">Disagreeable</tspan>
-                                    <tspan x="50%" y="60%">Neutral</tspan>
-                                    <tspan x="70%" y="60%">Agreeable</tspan>
-                                    <tspan x="90%" y="60%">Very Agreeable</tspan>
+                            <svg viewBox="0 0 800 100" width="100%" id="AgreeablenessSVG" name="AgreeablenessSVG" visibility="hidden">
+                                <line x1="9.7%" y1="53%" x2="89.7%" y2="53%" stroke="black" stroke-width="1%" />
+                                <text text-anchor="middle" font-size="19px">
+                                    <tspan x="50%" y="15%" id="AgreeablenessNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="35%" >Agreeableness</tspan>
+                                    <tspan x="10%" y="60%">|</tspan>
+                                    <tspan x="30%" y="60%">|</tspan>
+                                    <tspan x="50%" y="60%">|</tspan>
+                                    <tspan x="70%" y="60%">|</tspan>
+                                    <tspan x="90%" y="60%">|</tspan>
+                                    <tspan x="10%" y="80%">Very Disagreeable</tspan>
+                                    <tspan x="30%" y="80%">Disagreeable</tspan>
+                                    <tspan x="50%" y="80%">Neutral</tspan>
+                                    <tspan x="70%" y="80%">Agreeable</tspan>
+                                    <tspan x="90%" y="80%">Very Agreeable</tspan>
+                                    <tspan x="50%" y="100%" id="AgreeablenessDescription" >Agreeable people are agreeable. [placeholder]</tspan>
                                 </text>
-                                <circle id="AgreeablenessSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                                <circle id="AgreeablenessSummaryPoint" cx="50%" cy="53%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
                             </svg>
-                            <svg viewBox="0 0 800 50" width="100%" id="NeuroticismView" name="NeuroticismView" visibility="hidden">
-                                <text text-anchor="middle">
-                                    <tspan x="10%" y="20%">|</tspan>
-                                    <tspan x="30%" y="20%">|</tspan>
-                                    <tspan x="50%" y="20%">|</tspan>
-                                    <tspan x="70%" y="20%">|</tspan>
-                                    <tspan x="90%" y="20%">|</tspan>
-                                    <tspan x="10%" y="60%">Very Stable</tspan>
-                                    <tspan x="30%" y="60%">Stable</tspan>
-                                    <tspan x="50%" y="60%">Neutral</tspan>
-                                    <tspan x="70%" y="60%">Neurotic</tspan>
-                                    <tspan x="90%" y="60%">Very Neurotic</tspan>
+                            <svg viewBox="0 0 800 100" width="100%" id="NeuroticismSVG" name="NeuroticismSVG" visibility="hidden">
+                                <line x1="9.7%" y1="53%" x2="89.7%" y2="53%" stroke="black" stroke-width="1%" />
+                                <text text-anchor="middle" font-size="19px">
+                                    <tspan x="50%" y="15%" id="NeuroticismNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="35%" >Neuroticism</tspan>
+                                    <tspan x="10%" y="60%">|</tspan>
+                                    <tspan x="30%" y="60%">|</tspan>
+                                    <tspan x="50%" y="60%">|</tspan>
+                                    <tspan x="70%" y="60%">|</tspan>
+                                    <tspan x="90%" y="60%">|</tspan>
+                                    <tspan x="10%" y="80%">Very Stable</tspan>
+                                    <tspan x="30%" y="80%">Stable</tspan>
+                                    <tspan x="50%" y="80%">Neutral</tspan>
+                                    <tspan x="70%" y="80%">Neurotic</tspan>
+                                    <tspan x="90%" y="80%">Very Neurotic</tspan>
+                                    <tspan x="50%" y="100%" id="NeuroticismDescription" >Neurotic people are neurotic. [placeholder]</tspan>
                                 </text>
-                                <circle id="NeuroticismSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                                <circle id="NeuroticismSummaryPoint" cx="50%" cy="53%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
                             </svg>
-                            <svg viewBox="0 0 800 50" width="100%" visibility="hidden" id="OpennessView" name="OpennessView">
-                                <text text-anchor="middle">
-                                    <tspan x="10%" y="20%">|</tspan>
-                                    <tspan x="30%" y="20%">|</tspan>
-                                    <tspan x="50%" y="20%">|</tspan>
-                                    <tspan x="70%" y="20%">|</tspan>
-                                    <tspan x="90%" y="20%">|</tspan>
-                                    <tspan x="10%" y="60%">Closed-Off</tspan>
-                                    <tspan x="30%" y="60%">Guarded</tspan>
-                                    <tspan x="50%" y="60%">Neutral</tspan>
-                                    <tspan x="70%" y="60%">Open</tspan>
-                                    <tspan x="90%" y="60%">Very Open</tspan>
+                            <svg viewBox="0 0 800 100" width="100%" visibility="hidden" id="OpennessSVG" name="OpennessSVG">
+                                <line x1="9.7%" y1="53%" x2="89.7%" y2="53%" stroke="black" stroke-width="1%" />
+                                <text text-anchor="middle" font-size="19px">
+                                    <tspan x="50%" y="15%" id="OpennessNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="35%" >Openness</tspan>
+                                    <tspan x="10%" y="60%">|</tspan>
+                                    <tspan x="30%" y="60%">|</tspan>
+                                    <tspan x="50%" y="60%">|</tspan>
+                                    <tspan x="70%" y="60%">|</tspan>
+                                    <tspan x="90%" y="60%">|</tspan>
+                                    <tspan x="10%" y="80%">Closed-Off</tspan>
+                                    <tspan x="30%" y="80%">Guarded</tspan>
+                                    <tspan x="50%" y="80%">Neutral</tspan>
+                                    <tspan x="70%" y="80%">Open</tspan>
+                                    <tspan x="90%" y="80%">Very Open</tspan>
+                                    <tspan x="50%" y="100%" id="OpennessDescription" >Open people are open. [placeholder]</tspan>
                                 </text>
-                                <circle id="OpennessSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                                <circle id="OpennessSummaryPoint" cx="50%" cy="53%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
                             </svg>
-                            <svg viewBox="0 0 800 50" width="100%" id="ConscientiousnessView" name="ConscientiousnessView" visibility="hidden">
-                                <text text-anchor="middle">
-                                    <tspan x="10%" y="20%">|</tspan>
-                                    <tspan x="30%" y="20%">|</tspan>
-                                    <tspan x="50%" y="20%">|</tspan>
-                                    <tspan x="70%" y="20%">|</tspan>
-                                    <tspan x="89%" y="20%">|</tspan>
-                                    <tspan x="10%" y="60%">Negligent</tspan>
-                                    <tspan x="30%" y="60%">Careless</tspan>
-                                    <tspan x="50%" y="60%">Neutral</tspan>
-                                    <tspan x="70%" y="60%">Conscientious</tspan>
-                                    <tspan x="90%" y="60%">Very Conscientious</tspan>
+                            <svg viewBox="0 0 800 100" width="100%" id="ConscientiousnessSVG" name="ConscientiousnessSVG" visibility="hidden">
+                                <line x1="9.7%" y1="53%" x2="89.7%" y2="53%" stroke="black" stroke-width="1%" />
+                                <text text-anchor="middle" font-size="19px">
+                                    <tspan x="50%" y="15%" id="ConscientiousnessNameAs" >Person as Self</tspan>
+                                    <tspan x="50%" y="35%" >Conscientiousness</tspan>
+                                    <tspan x="10%" y="60%">|</tspan>
+                                    <tspan x="30%" y="60%">|</tspan>
+                                    <tspan x="50%" y="60%">|</tspan>
+                                    <tspan x="70%" y="60%">|</tspan>
+                                    <tspan x="90%" y="60%">|</tspan>
+                                    <tspan x="10%" y="80%">Negligent</tspan>
+                                    <tspan x="30%" y="80%">Careless</tspan>
+                                    <tspan x="50%" y="80%">Neutral</tspan>
+                                    <tspan x="70%" y="80%">Conscientious</tspan>
+                                    <tspan x="90%" y="80%">Very Conscientious</tspan>
+                                    <tspan x="50%" y="100%" id="ConscientiousnessDescription" >Conscientious people are conscientious. [placeholder]</tspan>
                                 </text>
-                                <circle id="ConscientiousnessSummaryPoint" cx="50%" cy="17%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
+                                <circle id="ConscientiousnessSummaryPoint" cx="50%" cy="53%" r="1%" stroke="black" stroke-width="1%" fill="blue" />
                             </svg>
                         </div>
-                        <div id="ImageView" name="ImageView" hidden>
-                            <div>Mood</div>
-                            <img id="MoodImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Anger Control</div>
-                            <img id="AngerControlImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Impulse Control</div>
-                            <img id="ImpulseControlImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Relations</div>
-                            <img id="RelationsImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Self Defense</div>
-                            <img id="SelfDefenseImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Interests</div>
-                            <img id="InterestsImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Activities</div>
-                            <img id="ActivitiesImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Social Attitudes</div>
-                            <img id="SocialAttitudesImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Intelligence</div>
-                            <img id="IntelligenceImage" width="10%" onclick="toggleImageSize(this);"/>
-                            <div>Character</div>
-                            <img id="CharacterImage" width="10%" onclick="toggleImageSize(this);"/>
-                        </div>
-                        <input type="submit" value="Reset" />
             </form>
     </body>
 </html>
