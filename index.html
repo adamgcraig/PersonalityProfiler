@@ -439,6 +439,11 @@
             var scaleMidpoint = (scaleMax + scaleMin)/2;
             return scaleDirection[scaleAdj]*( Number(scale.value) - scaleMidpoint )/( scaleMax - scaleMidpoint );
         }
+        // We need to URL-encode this, because the page contains an end-of-script tag.
+        // If left as-is, the browser interprets it as the end of the script we are in right now.
+        function getHTMLDataURL( title, images) {
+            return "data:text/html,%3C%21DOCTYPE%20html%3E%0A%3Chtml%3E%0A%20%20%20%20%3Chead%3E%0A%20%20%20%20%20%20%20%20%3Ctitle%3E" + encodeURIComponent(title) + "%3C%2Ftitle%3E%0A%20%20%20%20%20%20%20%20%3Cstyle%3E%0A%20%20%20%20%20%20%20%20body%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20text-align%3A%20center%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20form%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20font-size%3A%2030px%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%3C%2Fstyle%3E%0A%20%20%20%20%20%20%20%20%3Cscript%3E%0A%20%20%20%20%20%20%20%20function%20toggleImageSize%28imgRef%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28imgRef.style.width%20%3D%3D%20%22100%25%22%29%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20imgRef.style.width%20%3D%20%2210%25%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20else%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20imgRef.style.width%20%3D%20%22100%25%22%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%3C%2Fscript%3E%0A%20%20%20%20%20%20%20%20%3Cnoscript%3EToggling%20image%20size%20requires%20JavaScript.%3C%2Fnoscript%3E%0A%20%20%20%20%3C%2Fhead%3E%0A%20%20%20%20%3Cbody%3E%0A%20%20%20%20%20%20%20%20%3Ch1%3E" + encodeURIComponent(title) + "%3C%2Fh1%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%3E" + encodeURIComponent(images) + "%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fbody%3E%0A%3C%2Fhtml%3E";
+        }
         function scalesDone() {
             document.getElementById("Scales").hidden = true;
             console.log( 'shuffledScales: '+shuffledScales.join(' ') );
@@ -485,8 +490,11 @@
                 document.getElementById(factor+"Description").innerHTML = factorDescriptions[descriptionIndex];
                 // Take the SVG content and turn it into a data URL in an image element to create a saveable version.
                 document.getElementById("SingleTraitImage").setAttribute( "src", "data:image/svg+xml;charset=UTF-8,<?xml version='1.0' encoding='utf-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='1000px' height='200px' viewBox='0 0 800 100' xml:space='preserve' >"+document.getElementById(factor+"SVG").innerHTML+"</svg>" );
+                // Now embed this in content in a data URL with a web page that the user can load in a browser and save.
+                document.getElementById("SaveableLink").setAttribute(  "href",  getHTMLDataURL( nameAsDate, document.getElementById("SingleTraitImageView").innerHTML )  );
                 // document.getElementById("SingleTraitImage").setAttribute("visibility","visible");
                 document.getElementById("SingleTraitImageView").hidden = false;
+                document.getElementById("SaveableAndExplanation").hidden = false;
                 document.getElementById("ResetButton").hidden = false;
                 return;
             }
@@ -605,7 +613,10 @@
                     // Take the SVG content and turn it into a data URL in an image element to create a saveable version.
                     document.getElementById(domain.name+"Image").setAttribute( "src", "data:image/svg+xml;charset=UTF-8,<?xml version='1.0' encoding='utf-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='1000px' height='1000px' viewBox='0 0 600 600' xml:space='preserve' >"+document.getElementById(domain.name+"Circumplex").innerHTML+"</svg>" );
                 }
+                document.getElementById("SaveableLink").setAttribute(  "href",  getHTMLDataURL( nameAsDate, document.getElementById("ImageView").innerHTML )  );
+                // Keep the original circumplexes hidden.
                 // document.getElementById("CircumplexView").hidden = false;
+                document.getElementById("SaveableAndExplanation").hidden = false;
                 document.getElementById("ImageView").hidden = false;
                 document.getElementById("ResetButton").hidden = false;
             }
@@ -768,6 +779,9 @@
                 </div>
                 <div id="SingleTraitImageView" hidden>
                     <img id="SingleTraitImage" width="100%"/>
+                </div>
+                <div id="SaveableAndExplanation" hidden>This link is a data URL. It is very long because it contains the complete data for the saveable version of the profile. To save the profile, right-click the link, open it in a new tab, and save the page as an HTML file.<br>
+                    <a id="SaveableLink">Saveable Version</a>
                 </div>
                 <input id="ResetButton" type="submit" value="Reset" hidden />
                         <div hidden>
